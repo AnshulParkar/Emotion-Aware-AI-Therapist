@@ -1,0 +1,40 @@
+# Core FastAPI and web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.4.2
+pydantic-core==2.10.1
+starlette==0.27.0
+
+# Image processing and computer vision
+opencv-python-headless==4.12.0.88
+pillow>=11.0.0
+numpy==2.3.2
+
+# HTTP and file handling
+python-multipart==0.0.6
+aiofiles==23.2.1
+httpx==0.25.2
+httpcore==1.0.9
+
+# Machine Learning (for future emotion detection models)
+# scikit-learn>=1.0.0
+# tensorflow>=2.10.0  # Uncomment when ready to add real ML models
+# torch>=1.12.0       # Alternative to TensorFlow
+
+# Base dependencies
+anyio==3.7.1
+sniffio==1.3.1
+idna==3.10
+certifi==2025.8.3
+h11==0.16.0
+click==8.2.1
+typing-extensions==4.15.0
+
+# Security and validation (minimal for ML backend)
+python-jose[cryptography]==3.3.0
+cryptography==45.0.7
+
+# Additional utilities
+requests==2.31.0
+urllib3==2.5.0
+charset-normalizer==3.4.3
