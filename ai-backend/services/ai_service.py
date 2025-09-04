@@ -1,0 +1,206 @@
+
+import google.generativeai as genai
+import os
+from typing import List, Dict, Optional
+import logging
+import asyncio
+
+logger = logging.getLogger(__name__)
+
+class GeminiService:
+    def __init__(self):
+        # Configure Gemini API
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY environment variable not set!")
+        
+        genai.configure(api_key=api_key)
+        
+        # Use Gemini Pro model (free tier)
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        self.model = genai.GenerativeModel(self.model_name)
+        
+        # Configure generation settings
+        self.generation_config = genai.types.GenerationConfig(
+            max_output_tokens=500,
+            temperature=0.7,
+            top_p=0.9,
+        )
+        
+    async def test_connection(self):
+        """Test Gemini API connection"""
+        try:
+            # Simple test prompt
+            response = await self.generate_response("Hello, this is a test.")
+            print(f"✅ Gemini API connection successful with model: {self.model_name}")
+            return True
+        except Exception as e:
+            print(f"❌ Gemini connection test failed: {str(e)}")
+            return False
+        
+    async def generate_response(self, prompt: str) -> str:
+        """Generate response using Gemini API"""
+        try:
+            # Run the synchronous generate_content in a thread pool
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None, 
+                lambda: self.model.generate_content(
+                    prompt,
+                    generation_config=self.generation_config
+                )
+            )
+            
+            if response.text:
+                return response.text.strip()
+            else:
+                raise Exception("Empty response from Gemini")
+                
+        except Exception as e:
+            logger.error(f"Error generating Gemini response: {str(e)}")
+            raise e
+        
+    async def generate_therapy_response(self, user_message: str, emotion: str = "neutral") -> str:
+        """Generate empathetic therapy response based on user message and detected emotion"""
+        try:
+            # Create emotion-aware system prompt
+            system_prompt = self._create_system_prompt(emotion)
+            
+            # Combine system prompt with user message
+            full_prompt = f"{system_prompt}\n\nUser: {user_message}\n\nAI Therapist:"
+            
+            print(f"🔄 Using Gemini model: {self.model_name}")
+            
+            # Generate response
+            response = await self.generate_response(full_prompt)
+            
+            print(f"✅ Success with Gemini model: {self.model_name}")
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error generating therapy response: {str(e)}")
+            print(f"❌ Gemini failed: {str(e)}")
+            return self._get_fallback_response(emotion)
+    
+    def _get_fallback_response(self, emotion: str) -> str:
+        """Provide a fallback response when API is unavailable"""
+        fallback_responses = {
+            "sad": "I hear that you're going through a difficult time. Your feelings are valid, and it's okay to feel sad. Would you like to talk more about what's troubling you?",
+            "angry": "It sounds like you're feeling frustrated or upset about something. Anger can be a signal that something important to you has been affected. Can you tell me more about what's causing these feelings?",
+            "fearful": "I can sense you might be feeling anxious or worried. It's natural to feel this way when facing uncertainty. What specific concerns are weighing on your mind right now?",
+            "happy": "It's wonderful to hear that you're feeling positive! Happiness is precious. What's contributing to your good mood today?",
+            "surprised": "It sounds like something unexpected has happened. Sometimes surprises can be overwhelming. How are you processing this experience?",
+            "disgusted": "I can tell you're feeling frustrated or fed up with something. These feelings can be quite intense. What's causing you to feel this way?",
+            "neutral": "I'm here to listen and support you. What's on your mind today? Feel free to share whatever you're comfortable discussing."
+        }
+        
+        return fallback_responses.get(emotion.lower(), fallback_responses["neutral"])
+    
+    def _create_system_prompt(self, emotion: str) -> str:
+        """Create emotion-aware system prompt for therapy responses"""
+        base_prompt = """You are an empathetic AI therapist. Your role is to provide supportive, understanding, and professionally appropriate responses to help users explore their feelings and thoughts. Keep responses under 150 words. Be warm but professional. Always maintain therapeutic boundaries."""
+        
+        emotion_prompts = {
+            "happy": "The user seems positive. Acknowledge their happiness and explore what contributes to their well-being.",
+            "sad": "The user appears sad. Respond with extra empathy and help them process these feelings.",
+            "angry": "The user seems frustrated. Help them explore their anger constructively.",
+            "fearful": "The user appears anxious. Provide reassurance while exploring their concerns.",
+            "surprised": "The user seems surprised. Help them process unexpected events.",
+            "disgusted": "The user appears frustrated. Help them work through these difficult feelings.",
+            "neutral": "Provide balanced, supportive therapeutic guidance."
+        }
+        
+        emotion_context = emotion_prompts.get(emotion.lower(), emotion_prompts["neutral"])
+        return f"{base_prompt}\n\nCurrent context: {emotion_context}"
+
+
+# Terminal Chat Interface for Gemini
+async def main():
+    """Run interactive terminal chat with AI therapist using Gemini"""
+    import asyncio
+    from dotenv import load_dotenv
+    
+    # Load environment variables
+    load_dotenv()
+    
+    # Check if API key is set
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        print("❌ Error: GEMINI_API_KEY environment variable not set!")
+        print("Please set your Gemini API key:")
+        print("export GEMINI_API_KEY='your-api-key-here'")
+        print("\n🌟 Get your free Gemini API key at: https://aistudio.google.com/app/apikey")
+        return
+    
+    # Mask API key for display
+    masked_key = f"{api_key[:10]}...{api_key[-4:]}" if len(api_key) > 14 else "***"
+    
+    # Initialize the service
+    print("🤖 AI Therapist Terminal Chat (Powered by Google Gemini)")
+    print("=" * 70)
+    print(f"🔑 API Key: {masked_key}")
+    print("🆓 Using FREE Google Gemini API")
+    print("💡 Type 'quit', 'exit', or 'bye' to end the chat")
+    print("💡 You can specify emotion like: 'sad: I'm feeling down today'")
+    print("💡 Valid emotions: happy, sad, angry, fearful, surprised, disgusted, neutral")
+    print("=" * 70)
+    
+    service = GeminiService()
+    
+    # Test connection first
+    print("\n🔍 Testing Gemini API connection...")
+    connection_success = await service.test_connection()
+    
+    if not connection_success:
+        print("⚠️  API connection failed, continuing with fallback responses only...")
+    else:
+        print("✅ Connected successfully to Gemini API!")
+    
+    print("\n🚀 Chat started!")
+    
+    while True:
+        try:
+            # Get user input
+            user_input = input("\n💬 You: ").strip()
+            
+            # Check for exit commands
+            if user_input.lower() in ['quit', 'exit', 'bye', 'q']:
+                print("\n👋 Goodbye! Take care of yourself.")
+                break
+            
+            if not user_input:
+                continue
+            
+            # Parse emotion if provided (format: "emotion: message")
+            emotion = "neutral"
+            message = user_input
+            
+            if ":" in user_input and len(user_input.split(":", 1)) == 2:
+                potential_emotion, potential_message = user_input.split(":", 1)
+                potential_emotion = potential_emotion.strip().lower()
+                
+                # Check if it's a valid emotion
+                valid_emotions = ["happy", "sad", "angry", "fearful", "surprised", "disgusted", "neutral"]
+                if potential_emotion in valid_emotions:
+                    emotion = potential_emotion
+                    message = potential_message.strip()
+            
+            # Show processing indicator
+            print(f"\n🤔 AI Therapist (detected emotion: {emotion}): Thinking...")
+            
+            # Generate response
+            response = await service.generate_therapy_response(message, emotion)
+            
+            # Display response
+            print(f"\n🤖 AI Therapist: {response}")
+            
+        except KeyboardInterrupt:
+            print("\n\n👋 Chat interrupted. Goodbye!")
+            break
+        except Exception as e:
+            print(f"\n❌ Error: {str(e)}")
+            print("Please try again or type 'quit' to exit.")
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
