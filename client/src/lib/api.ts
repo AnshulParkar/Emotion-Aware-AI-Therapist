@@ -75,10 +75,11 @@ export const emotionApi = {
 // AI therapy API
 export const therapyApi = {
   chat: async (message: string, emotion: string, sessionId?: string) => {
+    // Note: sessionId parameter is kept for compatibility but not used
     return aiApi.post<{
       response: string;
       status: string;
-    }>('/chat', { message, emotion, session_id: sessionId });
+    }>('/chat', { message, emotion /* session_id: sessionId */ });
   },
 
   generateSpeech: async (text: string, voice: string = 'default') => {
@@ -95,19 +96,20 @@ export const therapyApi = {
     }>('/avatar', { text, avatar_id: avatarId });
   },
 
-  createSession: async (userId: string) => {
-    return aiApi.post<{
-      session_id: string;
-      status: string;
-    }>('/session', { user_id: userId });
-  },
+  // Session endpoints commented out for now
+  // createSession: async (userId: string) => {
+  //   return aiApi.post<{
+  //     session_id: string;
+  //     status: string;
+  //   }>('/session', { user_id: userId });
+  // },
 
-  getSession: async (sessionId: string) => {
-    return aiApi.get<{
-      session: any;
-      status: string;
-    }>(`/session/${sessionId}`);
-  },
+  // getSession: async (sessionId: string) => {
+  //   return aiApi.get<{
+  //     session: any;
+  //     status: string;
+  //   }>(`/session/${sessionId}`);
+  // },
 };
 
 // Utility functions

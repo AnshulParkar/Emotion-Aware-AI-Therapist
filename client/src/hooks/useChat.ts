@@ -12,19 +12,19 @@ interface ChatMessage {
 }
 
 interface UseChatOptions {
-  sessionId?: string;
+  // sessionId?: string;  // Commented out for now
   enableTTS?: boolean;
   enableAvatar?: boolean;
-  userId?: string;
+  // userId?: string;  // Commented out for now
 }
 
 export const useChat = (options: UseChatOptions = {}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(options.sessionId || null);
+  // const [sessionId, setSessionId] = useState<string | null>(options.sessionId || null);  // Commented out
 
-  const { enableTTS = false, enableAvatar = false, userId } = options;
+  const { enableTTS = false, enableAvatar = false /* userId */ } = options;
 
   const sendMessage = useCallback(async (
     content: string,
@@ -51,7 +51,8 @@ export const useChat = (options: UseChatOptions = {}) => {
       const response = await therapyApi.chat(
         content,
         currentEmotion || 'neutral',
-        sessionId || undefined
+        // sessionId || undefined  // Commented out session functionality
+        undefined
       );
 
       if (response.status !== 'success') {
@@ -100,21 +101,22 @@ export const useChat = (options: UseChatOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, sessionId, enableTTS, enableAvatar]);
+  }, [isLoading, /* sessionId, */ enableTTS, enableAvatar]);
 
-  const createSession = useCallback(async (userId: string): Promise<string | null> => {
-    try {
-      const response = await therapyApi.createSession(userId);
-      if (response.status === 'success') {
-        setSessionId(response.session_id);
-        return response.session_id;
-      }
-      return null;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create session');
-      return null;
-    }
-  }, []);
+  // Session functionality commented out for now
+  // const createSession = useCallback(async (userId: string): Promise<string | null> => {
+  //   try {
+  //     const response = await therapyApi.createSession(userId);
+  //     if (response.status === 'success') {
+  //       setSessionId(response.session_id);
+  //       return response.session_id;
+  //     }
+  //     return null;
+  //   } catch (err) {
+  //     setError(err instanceof Error ? err.message : 'Failed to create session');
+  //     return null;
+  //   }
+  // }, []);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -126,20 +128,20 @@ export const useChat = (options: UseChatOptions = {}) => {
     return userMessages[userMessages.length - 1]?.emotion;
   }, [messages]);
 
-  // Auto-create session if userId is provided but no sessionId
-  useEffect(() => {
-    if (userId && !sessionId) {
-      createSession(userId);
-    }
-  }, [userId, sessionId, createSession]);
+  // Auto-create session if userId is provided but no sessionId - COMMENTED OUT
+  // useEffect(() => {
+  //   if (userId && !sessionId) {
+  //     createSession(userId);
+  //   }
+  // }, [userId, sessionId, createSession]);
 
   return {
     messages,
     isLoading,
     error,
-    sessionId,
+    // sessionId,  // Commented out
     sendMessage,
-    createSession,
+    // createSession,  // Commented out
     clearMessages,
     getLastUserEmotion,
   };
