@@ -5,7 +5,7 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
-from services.openai_service import OpenAIService
+from services.ai_service import GeminiService
 from services.tts_service import TTSService
 from services.avatar_service import AvatarService
 from services.database_service import DatabaseService
@@ -31,7 +31,7 @@ app.add_middleware(
 security = HTTPBearer()
 
 # Initialize services
-openai_service = OpenAIService()
+gemini_service = GeminiService()
 tts_service = TTSService()
 avatar_service = AvatarService()
 db_service = DatabaseService()
@@ -50,8 +50,8 @@ async def chat_with_therapist(message: dict):
     try:
         user_message = message.get("message", "")
         emotion = message.get("emotion", "neutral")
-        
-        response = await openai_service.generate_therapy_response(user_message, emotion)
+
+        response = await gemini_service.generate_therapy_response(user_message, emotion)
         return {"response": response, "status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

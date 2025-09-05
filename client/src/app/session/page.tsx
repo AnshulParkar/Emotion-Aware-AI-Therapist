@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import VideoInterface from '../../components/VideoInterface';
+// import VideoInterface from '../../components/VideoInterface';
 import ChatInterface from '../../components/ChatInterface';
-import AvatarDisplay from '../../components/AvatarDisplay';
-import EmotionAnalytics from '../../components/EmotionAnalytics';
+// import AvatarDisplay from '../../components/AvatarDisplay';
+// import EmotionAnalytics from '../../components/EmotionAnalytics';
 import { utils } from '../../lib/api';
 
 interface EmotionData {
@@ -20,10 +20,10 @@ const TherapySession: React.FC = () => {
   const [currentEmotion, setCurrentEmotion] = useState<string>('neutral');
   const [emotionHistory, setEmotionHistory] = useState<EmotionData[]>([]);
   const [currentEmotionData, setCurrentEmotionData] = useState<EmotionData | null>(null);
-  const [avatarSettings, setAvatarSettings] = useState({
-    enableTTS: true,
-    enableAvatar: true,
-  });
+  // const [avatarSettings, setAvatarSettings] = useState({
+  //   enableTTS: true,
+  //   enableAvatar: true,
+  // });
 
   const handleEmotionDetected = (emotion: string, confidence: number) => {
     setCurrentEmotion(emotion);
@@ -43,7 +43,8 @@ const TherapySession: React.FC = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">MindBridge Therapy Session</h1>
               <p className="text-sm text-gray-600">
-                AI-Powered Emotion-Aware Therapy • Session: {sessionId || 'Starting...'}
+                AI-Powered Emotion-Aware Therapy • 
+                Session: {sessionId || 'Starting...'}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -51,8 +52,8 @@ const TherapySession: React.FC = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={avatarSettings.enableTTS}
-                    onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableTTS: e.target.checked }))}
+                    // checked={avatarSettings.enableTTS}
+                    // onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableTTS: e.target.checked }))}
                     className="mr-2"
                   />
                   Text-to-Speech
@@ -60,8 +61,8 @@ const TherapySession: React.FC = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={avatarSettings.enableAvatar}
-                    onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableAvatar: e.target.checked }))}
+                      // checked={avatarSettings.enableAvatar}
+                      // onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableAvatar: e.target.checked }))}
                     className="mr-2"
                   />
                   Avatar Video
@@ -80,17 +81,17 @@ const TherapySession: React.FC = () => {
             {/* Video Interface */}
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <h2 className="text-lg font-semibold mb-4">Video Feed</h2>
-              <VideoInterface
+              {/* <VideoInterface
                 onEmotionDetected={handleEmotionDetected}
                 className="w-full"
-              />
+              /> */}
             </div>
 
             {/* Emotion Analytics */}
-            <EmotionAnalytics
+            {/* <EmotionAnalytics
               currentEmotion={currentEmotionData || undefined}
               emotionHistory={emotionHistory}
-            />
+            /> */}
           </div>
 
           {/* Middle Column - Chat Interface */}
@@ -100,8 +101,8 @@ const TherapySession: React.FC = () => {
                 currentEmotion={currentEmotion}
                 userId={userId}
                 sessionId={sessionId || undefined}
-                enableTTS={avatarSettings.enableTTS}
-                enableAvatar={avatarSettings.enableAvatar}
+                // enableTTS={avatarSettings.enableTTS}
+                // enableAvatar={avatarSettings.enableAvatar}
                 className="h-full"
               />
             </div>
@@ -111,9 +112,9 @@ const TherapySession: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <h2 className="text-lg font-semibold mb-4">AI Therapist Avatar</h2>
-              <AvatarDisplay
+              {/* <AvatarDisplay
                 className="w-full"
-              />
+              /> */}
             </div>
 
             {/* Session Info */}
@@ -122,11 +123,11 @@ const TherapySession: React.FC = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">User ID:</span>
-                  <span className="font-mono text-xs">{userId}</span>
+                  {/* <span className="font-mono text-xs">{userId}</span> */}
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Session ID:</span>
-                  <span className="font-mono text-xs">{sessionId || 'Creating...'}</span>
+                  {/* <span className="font-mono text-xs">{sessionId || 'Creating...'}</span> */}
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Current Emotion:</span>
@@ -134,7 +135,7 @@ const TherapySession: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Emotion Readings:</span>
-                  <span>{emotionHistory.length}</span>
+                  {/* <span>{emotionHistory.length}</span> */}
                 </div>
               </div>
             </div>
