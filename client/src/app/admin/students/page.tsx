@@ -10,10 +10,27 @@ interface Student {
   frequency: 'never' | 'rarely' | 'occasionally' | 'frequently';
 }
 
+const frequencies = ['all', 'never', 'rarely', 'occasionally', 'frequently'] as const;
+
 const AdminStudents: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+  const [frequencyFilter, setFrequencyFilter] = useState<typeof frequencies[number]>('all');
+
+  // Debounce search term
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 300); // 300ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -31,6 +48,7 @@ const AdminStudents: React.FC = () => {
         }));
 
         setStudents(data);
+        setFilteredStudents(data);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -41,11 +59,28 @@ const AdminStudents: React.FC = () => {
     fetchStudents();
   }, []);
 
+  // Apply search & filter
+  useEffect(() => {
+    let filtered = students;
+
+    if (debouncedSearch) {
+      filtered = filtered.filter(student =>
+        student.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+      );
+    }
+
+    if (frequencyFilter !== 'all') {
+      filtered = filtered.filter(student => student.frequency === frequencyFilter);
+    }
+
+    setFilteredStudents(filtered);
+  }, [debouncedSearch, frequencyFilter, students]);
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Students</h1>
             <p className="text-gray-600 dark:text-gray-300 mt-1">Manage student accounts and monitor progress</p>
@@ -56,6 +91,26 @@ const AdminStudents: React.FC = () => {
               Add Student
             </button>
           </div>
+        </div>
+
+        {/* Search & Filter */}
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-wrap gap-4 items-center">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border rounded-lg w-60 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <select
+            value={frequencyFilter}
+            onChange={e => setFrequencyFilter(e.target.value as typeof frequencies[number])}
+            className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {frequencies.map(freq => (
+              <option key={freq} value={freq}>{freq === 'all' ? 'All Frequencies' : freq}</option>
+            ))}
+          </select>
         </div>
       </header>
 
@@ -77,14 +132,14 @@ const AdminStudents: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {students.length === 0 ? (
+                {filteredStudents.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-4 text-center text-gray-600 dark:text-gray-300">
                       No students to show
                     </td>
                   </tr>
                 ) : (
-                  students.map((student, index) => (
+                  filteredStudents.map((student, index) => (
                     <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">{index + 1}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white">{student.name}</td>
