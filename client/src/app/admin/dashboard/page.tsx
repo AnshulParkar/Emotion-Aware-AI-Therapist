@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ThemeToggle from '../../components/ThemeToggle';
+import ThemeToggle from '../../../components/ThemeToggle';
 
 interface AdminStats {
   totalStudents: number;
