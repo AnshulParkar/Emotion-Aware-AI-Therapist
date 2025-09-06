@@ -4,8 +4,8 @@ import { protectStudent } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
+router.post("/auth/register", register);
+router.post("/auth/login", login);
 router.get("/mood", getMood);
 router.get("/mood-history", getMoodHistory);
 router.get("/profile", getStudentProfile);

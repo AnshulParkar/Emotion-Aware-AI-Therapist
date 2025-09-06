@@ -7,10 +7,10 @@ interface Student {
   name: string;
   email: string;
   lastSession: string;
-  frequency: 'never' | 'rarely' | 'occasionally' | 'frequently';
+  frequency: 'Never' | 'Rarely' | 'Occasionally' | 'Frequently';
 }
 
-const frequencies = ['all', 'never', 'rarely', 'occasionally', 'frequently'] as const;
+const frequencies = ['All', 'Never', 'Rarely', 'Occasionally', 'Frequently'] as const;
 
 const AdminStudents: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -19,7 +19,7 @@ const AdminStudents: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
-  const [frequencyFilter, setFrequencyFilter] = useState<typeof frequencies[number]>('all');
+  const [frequencyFilter, setFrequencyFilter] = useState<typeof frequencies[number]>('All');
 
   // Debounce search term
   useEffect(() => {
@@ -69,7 +69,7 @@ const AdminStudents: React.FC = () => {
       );
     }
 
-    if (frequencyFilter !== 'all') {
+    if (frequencyFilter !== 'All') {
       filtered = filtered.filter(student => student.frequency === frequencyFilter);
     }
 
@@ -83,7 +83,7 @@ const AdminStudents: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Students</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage student accounts and monitor progress</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage students and monitor progress</p>
           </div>
           <div className="flex items-center space-x-4">
             <ThemeToggle />
@@ -108,7 +108,7 @@ const AdminStudents: React.FC = () => {
             className="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {frequencies.map(freq => (
-              <option key={freq} value={freq}>{freq === 'all' ? 'All Frequencies' : freq}</option>
+              <option key={freq} value={freq}>{freq === 'All' ? 'All Frequencies' : freq}</option>
             ))}
           </select>
         </div>

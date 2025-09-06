@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ThemeToggle from '../../components/ThemeToggle';
+import ThemeToggle from '../../../components/ThemeToggle';
 
 export default function AuthPage() {
   const [role, setRole] = useState<'student' | 'admin'>('student');
@@ -14,7 +14,13 @@ export default function AuthPage() {
     setError('');
     setSuccess('');
 
-    const url = `http://localhost:5001/api/${role}/login`;
+    // **Validation for empty fields**
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+    const url = `http://localhost:5001/api/${role}/auth/login`;
     const body = { email, password };
 
     try {
@@ -44,7 +50,7 @@ export default function AuthPage() {
 
         {/* Left Side - Login Form */}
         <div className="w-1/2 p-10 flex flex-col justify-center">
-          {/* Role Selector - inside flow */}
+          {/* Role Selector */}
           <div className="flex mb-6 border border-gray-300 dark:border-gray-600 rounded-md shadow-md overflow-hidden w-max mx-auto">
             <button
               onClick={() => setRole('student')}
@@ -101,7 +107,7 @@ export default function AuthPage() {
           {/* Sign Up Link */}
           <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
             Don&apos;t have an account?{' '}
-            <a href="/signup" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
+            <a href="/auth/signup" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline">
               Sign up
             </a>
           </p>

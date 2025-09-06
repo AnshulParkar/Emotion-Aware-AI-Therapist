@@ -47,9 +47,13 @@ export const deleteStudent = async (req, res) => {
   }
 };
 
-export const registerAdmin = async (req, res) => {
+export const register = async (req, res) => {
   const { name, email, password } = req.body;
   try {
+    const existingUser = await Admin.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already registered" });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const admin = new Admin({ name, email, password: hashedPassword });
     await admin.save();
