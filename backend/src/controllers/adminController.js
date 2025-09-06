@@ -100,7 +100,7 @@ export const updateProfile = async (req, res) => {
             admin.password = await bcrypt.hash(password, 10);
         }
         await admin.save();
-        res.json({ message: "Admin updated successfully" });
+        res.json({ message: "Admin profile updated successfully" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

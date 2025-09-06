@@ -40,6 +40,23 @@ export const getStudentProfile = async (req, res) => {
   }
 };
 
+export const updateProfile = async (req, res) => {
+  const { name, email, password } = req.body;
+    try {
+        const student = await Student.findById(req.user.id);
+        if (!student) return res.status(404).json({ message: "Student not found" });
+        student.name = name || student.name;
+        student.email = email || student.email;
+        if (password) {
+            student.password = await bcrypt.hash(password, 10);
+        }
+        await student.save();
+        res.json({ message: "Student updated successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export const updateMood = async (req, res) => {
   const { status, frequency } = req.body;
     try {
