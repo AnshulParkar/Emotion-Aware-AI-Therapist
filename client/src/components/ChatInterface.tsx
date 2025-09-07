@@ -25,6 +25,8 @@ interface ChatInterfaceProps {
   // sessionId?: string;  // Commented out
   enableTTS?: boolean;
   enableAvatar?: boolean;
+  onAvatarResponse?: (avatarUrl?: string, audioUrl?: string) => void;
+  onAvatarGenerationStart?: () => void;
   className?: string;
 }
 
@@ -34,6 +36,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   // sessionId,  // Commented out
   enableTTS = false,
   enableAvatar = false,
+  onAvatarResponse,
+  onAvatarGenerationStart,
   className = '',
 }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -49,6 +53,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     // userId,  // Commented out
     enableTTS,
     enableAvatar,
+    onAvatarResponse,
+    onAvatarGenerationStart,
   });
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -141,30 +147,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 )}
               </div>
 
-              {/* Audio Player */}
-              {message.audioUrl && (
-                <div className="mt-2">
-                  <audio controls className="w-full max-w-xs">
-                    <source src={message.audioUrl} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              )}
-
-              {/* Avatar Video */}
-              {message.avatarUrl && (
-                <div className="mt-2">
-                  <video
-                    controls
-                    className="w-full max-w-xs rounded"
-                    autoPlay
-                    muted
-                  >
-                    <source src={message.avatarUrl} type="video/mp4" />
-                    Your browser does not support the video element.
-                  </video>
-                </div>
-              )}
+              {/* Audio and video are handled by AvatarDisplay component - no UI here */}
             </div>
           </div>
         ))}
@@ -175,8 +158,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div className="flex items-center space-x-2">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:0.1s]"></div>
+                  <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">Therapist is typing...</span>
               </div>

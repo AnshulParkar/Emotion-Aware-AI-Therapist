@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { therapyApi } from '../lib/api';
+import { therapyApi, API_CONFIG } from '../lib/api';
 
 interface ChatMessage {
   id: string;
@@ -15,6 +15,8 @@ interface UseChatOptions {
   // sessionId?: string;  // Commented out for now
   enableTTS?: boolean;
   enableAvatar?: boolean;
+  onAvatarResponse?: (avatarUrl?: string, audioUrl?: string) => void;
+  onAvatarGenerationStart?: () => void;
   // userId?: string;  // Commented out for now
 }
 
@@ -24,7 +26,7 @@ export const useChat = (options: UseChatOptions = {}) => {
   const [error, setError] = useState<string | null>(null);
   // const [sessionId, setSessionId] = useState<string | null>(options.sessionId || null);  // Commented out
 
-  const { enableTTS = false, enableAvatar = false /* userId */ } = options;
+  const { enableTTS = false, enableAvatar = false, onAvatarResponse, onAvatarGenerationStart /* userId */ } = options;
 
   const sendMessage = useCallback(async (
     content: string,
@@ -72,7 +74,10 @@ export const useChat = (options: UseChatOptions = {}) => {
         try {
           const ttsResponse = await therapyApi.generateSpeech(response.response);
           if (ttsResponse.status === 'success') {
-            therapistMessage.audioUrl = ttsResponse.audio_url;
+            // Prepend backend URL to the audio path
+            therapistMessage.audioUrl = ttsResponse.audio_url.startsWith('/') 
+              ? `${API_CONFIG.AI_BACKEND_URL}${ttsResponse.audio_url}`
+              : ttsResponse.audio_url;
           }
         } catch (ttsError) {
           console.warn('TTS generation failed:', ttsError);
@@ -81,17 +86,20 @@ export const useChat = (options: UseChatOptions = {}) => {
 
       // Generate avatar if enabled
       if (enableAvatar) {
-        try {
-          const avatarResponse = await therapyApi.generateAvatar(response.response);
-          if (avatarResponse.status === 'success') {
-            therapistMessage.avatarUrl = avatarResponse.video_url;
-          }
-        } catch (avatarError) {
-          console.warn('Avatar generation failed:', avatarError);
-        }
+        // Skip API call and directly use the dummy video
+        onAvatarGenerationStart?.();
+        
+        // Directly use the dummy video file from public folder
+        therapistMessage.avatarUrl = '/aiVideo.mp4';
+        
+        console.log('Avatar enabled: Using dummy video /aiVideo.mp4');
       }
 
       setMessages(prev => [...prev, therapistMessage]);
+      
+      // Call the callback with the new avatar/audio URLs
+      onAvatarResponse?.(therapistMessage.avatarUrl, therapistMessage.audioUrl);
+      
       return therapistMessage;
 
     } catch (err) {
@@ -101,7 +109,7 @@ export const useChat = (options: UseChatOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, /* sessionId, */ enableTTS, enableAvatar]);
+  }, [isLoading, /* sessionId, */ enableTTS, enableAvatar, onAvatarResponse, onAvatarGenerationStart]);
 
   // Session functionality commented out for now
   // const createSession = useCallback(async (userId: string): Promise<string | null> => {

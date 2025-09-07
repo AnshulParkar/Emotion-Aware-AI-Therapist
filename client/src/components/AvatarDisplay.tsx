@@ -35,26 +35,41 @@ const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
   };
 
   const handlePlayAvatar = () => {
+    console.log('Playing avatar with:', { avatarUrl, audioUrl });
+    
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.play();
+      videoRef.current.play().catch(console.error);
     }
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
-      audioRef.current.play();
+      audioRef.current.play().catch(e => {
+        console.error('Audio play failed:', e);
+        console.error('Audio URL:', audioUrl);
+        console.error('Audio element:', audioRef.current);
+      });
     }
   };
 
   // Auto-play when new content is available
   useEffect(() => {
-    if (avatarUrl && !isGenerating) {
-      // Small delay to ensure video is loaded
+    if (avatarUrl && audioUrl && !isGenerating) {
+      console.log('Auto-playing avatar with audio:', { avatarUrl, audioUrl });
+      // Small delay to ensure both video and audio are loaded
       const timer = setTimeout(() => {
         handlePlayAvatar();
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [avatarUrl, isGenerating]);
+  }, [avatarUrl, audioUrl, isGenerating]);
+
+  // Handle audio end to stop video looping
+  const handleAudioEnded = () => {
+    setIsPlaying(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
 
   return (
     <div className={`relative ${className}`}>
@@ -76,7 +91,18 @@ const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
             ref={videoRef}
             className="w-full h-full object-cover"
             onPlay={handleVideoPlay}
-            onEnded={handleVideoEnded}
+            onEnded={() => {
+              // Only end if audio is not playing or audio has ended
+              if (!audioRef.current || audioRef.current.ended || audioRef.current.paused) {
+                handleVideoEnded();
+              } else {
+                // If audio is still playing, loop the video
+                if (videoRef.current) {
+                  videoRef.current.currentTime = 0;
+                  videoRef.current.play();
+                }
+              }
+            }}
             onError={handleVideoError}
             playsInline
             muted={!!audioUrl} // Mute video if we have separate audio
@@ -101,9 +127,19 @@ const AvatarDisplay: React.FC<AvatarDisplayProps> = ({
           <audio
             ref={audioRef}
             className="hidden"
-            onEnded={handleVideoEnded}
+            onEnded={handleAudioEnded}
+            onError={(e) => {
+              console.error('Audio failed to load:', audioUrl);
+              console.error('Audio error event:', e);
+            }}
+            onLoadStart={() => console.log('Audio load started:', audioUrl)}
+            onCanPlay={() => console.log('Audio can play:', audioUrl)}
+            onPlay={() => console.log('Audio playing:', audioUrl)}
+            onPause={() => console.log('Audio paused:', audioUrl)}
           >
             <source src={audioUrl} type="audio/mpeg" />
+            <source src={audioUrl} type="audio/wav" />
+            <source src={audioUrl} type="audio/ogg" />
           </audio>
         )}
 

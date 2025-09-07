@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 // import VideoInterface from '../../components/VideoInterface';
 import ChatInterface from '../../components/ChatInterface';
-// import AvatarDisplay from '../../components/AvatarDisplay';
+import AvatarDisplay from '../../components/AvatarDisplay';
 // import EmotionAnalytics from '../../components/EmotionAnalytics';
 import ThemeToggle from '../../components/ThemeToggle';
 import { utils } from '../../lib/api';
@@ -21,10 +21,15 @@ const TherapySession: React.FC = () => {
   const [currentEmotion, setCurrentEmotion] = useState<string>('neutral');
   const [emotionHistory, setEmotionHistory] = useState<EmotionData[]>([]);
   const [currentEmotionData, setCurrentEmotionData] = useState<EmotionData | null>(null);
-  // const [avatarSettings, setAvatarSettings] = useState({
-  //   enableTTS: true,
-  //   enableAvatar: true,
-  // });
+  const [avatarSettings, setAvatarSettings] = useState({
+    enableTTS: false,
+    enableAvatar: false,
+  });
+  
+  // State for avatar display
+  const [latestAvatarUrl, setLatestAvatarUrl] = useState<string | undefined>();
+  const [latestAudioUrl, setLatestAudioUrl] = useState<string | undefined>();
+  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
 
   const handleEmotionDetected = (emotion: string, confidence: number) => {
     setCurrentEmotion(emotion);
@@ -33,6 +38,22 @@ const TherapySession: React.FC = () => {
   const handleEmotionDataUpdate = (emotionData: EmotionData) => {
     setCurrentEmotionData(emotionData);
     setEmotionHistory(prev => [...prev.slice(-49), emotionData]);
+  };
+
+  // Callback to receive new avatar/audio from chat
+  const handleNewAvatarResponse = (avatarUrl?: string, audioUrl?: string) => {
+    if (avatarUrl) {
+      setLatestAvatarUrl(avatarUrl);
+    }
+    if (audioUrl) {
+      setLatestAudioUrl(audioUrl);
+    }
+    setIsGeneratingAvatar(false);
+  };
+
+  // Callback when chat starts generating avatar
+  const handleAvatarGenerationStart = () => {
+    setIsGeneratingAvatar(true);
   };
 
   return (
@@ -54,8 +75,8 @@ const TherapySession: React.FC = () => {
                 <label className="flex items-center text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"
-                    // checked={avatarSettings.enableTTS}
-                    // onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableTTS: e.target.checked }))}
+                    checked={avatarSettings.enableTTS}
+                    onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableTTS: e.target.checked }))}
                     className="mr-2"
                   />
                   Text-to-Speech
@@ -63,8 +84,8 @@ const TherapySession: React.FC = () => {
                 <label className="flex items-center text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"
-                      // checked={avatarSettings.enableAvatar}
-                      // onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableAvatar: e.target.checked }))}
+                    checked={avatarSettings.enableAvatar}
+                    onChange={(e) => setAvatarSettings(prev => ({ ...prev, enableAvatar: e.target.checked }))}
                     className="mr-2"
                   />
                   Avatar Video
@@ -103,8 +124,10 @@ const TherapySession: React.FC = () => {
                 currentEmotion={currentEmotion}
                 // userId={userId}  // Commented out
                 // sessionId={sessionId || undefined}  // Commented out
-                // enableTTS={avatarSettings.enableTTS}
-                // enableAvatar={avatarSettings.enableAvatar}
+                enableTTS={avatarSettings.enableTTS}
+                enableAvatar={avatarSettings.enableAvatar}
+                onAvatarResponse={handleNewAvatarResponse}
+                onAvatarGenerationStart={handleAvatarGenerationStart}
                 className="h-full"
               />
             </div>
@@ -114,9 +137,12 @@ const TherapySession: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-4 transition-colors duration-300">
               <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">AI Therapist Avatar</h2>
-              {/* <AvatarDisplay
+              <AvatarDisplay
+                avatarUrl={latestAvatarUrl}
+                audioUrl={latestAudioUrl}
+                isGenerating={isGeneratingAvatar}
                 className="w-full"
-              /> */}
+              />
             </div>
 
             {/* Session Info */}
