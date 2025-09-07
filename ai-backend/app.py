@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 import uvicorn
 import os
+import multiprocessing
+import sys
 from dotenv import load_dotenv
 
-from services.ai_service import GeminiService
-from services.tts_service import TTSService
-from services.avatar_service import AvatarService
-# from services.database_service import DatabaseService  # Commented out for now
+# Fix for Windows multiprocessing issues
+if sys.platform == "win32":
+    multiprocessing.set_start_method("spawn", force=True)
 
 load_dotenv()
 
@@ -30,13 +31,26 @@ app.add_middleware(
 # Security
 security = HTTPBearer()
 
-# Initialize services
-gemini_service = GeminiService()
-tts_service = TTSService()
-avatar_service = AvatarService()
-# db_service = DatabaseService()  # Commented out for now
+# Initialize services lazily to avoid import issues
+gemini_service = None
+tts_service = None
+avatar_service = None
 
-@app.get("/")
+def get_services():
+    """Lazy initialization of services"""
+    global gemini_service, tts_service, avatar_service
+    if gemini_service is None:
+        from services.ai_service import GeminiService
+        from services.tts_service import TTSService
+        from services.avatar_service import AvatarService
+        
+        gemini_service = GeminiService()
+        tts_service = TTSService()
+        avatar_service = AvatarService()
+    
+    return gemini_service, tts_service, avatar_service
+
+@app.get("/") # this is known as a decorator and gets executed when the root endpoint is hit
 async def root():
     return {"message": "AI Therapist Backend API", "status": "running"}
 
@@ -44,10 +58,12 @@ async def root():
 async def health_check():
     return {"status": "healthy", "service": "ai-backend"}
 
-@app.post("/chat")
+@app.post("/chat") # This is also a decorator and gets executed when the /chat endpoint is hit and post is the method that is used to send data to the endpoint
 async def chat_with_therapist(message: dict):
     """Generate therapeutic response using OpenAI"""
     try:
+        gemini_service, _, _ = get_services()
+        
         user_message = message.get("message", "")
         emotion = message.get("emotion", "neutral")
         # session_id = message.get("session_id", None)  # Commented out session functionality
@@ -61,6 +77,8 @@ async def chat_with_therapist(message: dict):
 async def text_to_speech(text_data: dict):
     """Convert text to speech"""
     try:
+        _, tts_service, _ = get_services()
+        
         text = text_data.get("text", "")
         voice = text_data.get("voice", "default")
         
@@ -73,6 +91,8 @@ async def text_to_speech(text_data: dict):
 async def generate_avatar(avatar_data: dict):
     """Generate talking avatar video"""
     try:
+        _, _, avatar_service = get_services()
+        
         text = avatar_data.get("text", "")
         avatar_id = avatar_data.get("avatar_id", "default")
         
@@ -101,9 +121,13 @@ async def generate_avatar(avatar_data: dict):
 #         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
+    # Add multiprocessing support for Windows
+    multiprocessing.freeze_support()
+    
     uvicorn.run(
-        "app:app",
+        app,  # Pass app object directly instead of string
         host="0.0.0.0",
         port=int(os.getenv("PORT", 8001)),
-        reload=True
+        reload=False,  # Disable reload to prevent multiprocessing issues
+        workers=1
     )

@@ -13,7 +13,7 @@ class TTSService:
     def __init__(self):
         self.elevenlabs_api_key = os.getenv("ELEVENLABS_API_KEY")
         self.elevenlabs_url = "https://api.elevenlabs.io/v1"
-        self.default_voice_id = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")  # Rachel voice
+        self.default_voice_id = os.getenv("ELEVENLABS_VOICE_ID", "nLiZs38w2b9S5WVDWipV")  # Sia voice ID
         
     async def generate_speech(self, text: str, voice: str = "default") -> str:
         """Generate speech from text using ElevenLabs API"""
