@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
 import multiprocessing
@@ -31,6 +32,13 @@ app.add_middleware(
 # Security
 security = HTTPBearer()
 
+# Create temp directory for audio files
+os.makedirs("temp", exist_ok=True)
+
+# Mount static files for audio and video serving
+app.mount("/audio", StaticFiles(directory="temp"), name="audio")
+app.mount("/video", StaticFiles(directory="temp"), name="video")
+
 # Initialize services lazily to avoid import issues
 gemini_service = None
 tts_service = None
@@ -60,7 +68,7 @@ async def health_check():
 
 @app.post("/chat") # This is also a decorator and gets executed when the /chat endpoint is hit and post is the method that is used to send data to the endpoint
 async def chat_with_therapist(message: dict):
-    """Generate therapeutic response using OpenAI"""
+    """Generate therapeutic response using Gemini"""
     try:
         gemini_service, _, _ = get_services()
         
