@@ -95,8 +95,7 @@ const VideoInterface: React.FC<VideoInterfaceProps> = ({
             autoPlay
             playsInline
             muted
-            className="w-full h-full object-cover"
-            style={{ width: '640px', height: '480px' }}
+            className="w-full h-full object-cover video-fixed-size"
           />
         ) : (
           <div 

@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-// Update the import path below if ThemeToggle is in a different directory
 import ThemeToggle from '../../../components/ThemeToggle';
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import SessionManager from '../../../lib/sessionManager';
+import SessionStatus from '../../../components/SessionStatus';
 
 interface SessionData {
   id: string;
@@ -16,6 +19,48 @@ interface SessionData {
 }
 
 const Dashboard: React.FC = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [sessionInfo, setSessionInfo] = useState({
+    timeRemaining: '',
+    expiringSoon: false,
+    isIncognito: false
+  });
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || session.user?.role !== "patient") {
+      router.replace("/auth/signin");
+    }
+  }, [session, status, router]);
+
+  // Setup session monitoring
+  useEffect(() => {
+    if (session) {
+      // Setup session handlers
+      SessionManager.setupSessionHandlers();
+      
+      // Check session info
+      const updateSessionInfo = async () => {
+        const timeRemaining = SessionManager.getSessionTimeRemaining(session);
+        const expiringSoon = SessionManager.isSessionExpiringSoon(session);
+        const isIncognito = await SessionManager.isIncognitoMode();
+        
+        setSessionInfo({
+          timeRemaining,
+          expiringSoon,
+          isIncognito
+        });
+      };
+      
+      updateSessionInfo();
+      
+      // Update session info every minute
+      const interval = setInterval(updateSessionInfo, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [session]);
+
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [stats, setStats] = useState({
     totalSessions: 0,
@@ -113,9 +158,29 @@ const Dashboard: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-300 mt-1">Track your therapy progress and emotional insights</p>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Session Status Indicator */}
+              <div className="text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className={`w-2 h-2 rounded-full ${sessionInfo.expiringSoon ? 'bg-yellow-500' : 'bg-green-500'}`}></div>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Session expires in {sessionInfo.timeRemaining}
+                  </span>
+                </div>
+                {sessionInfo.isIncognito && (
+                  <div className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    ⚠️ Private browsing - session will end when browser closes
+                  </div>
+                )}
+                {sessionInfo.expiringSoon && (
+                  <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                    ⏰ Session expiring soon
+                  </div>
+                )}
+              </div>
+              
               <ThemeToggle />
               <Link
-                href="/session"
+                href="/patient/session"
                 className="px-6 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium"
               >
                 Start New Session
@@ -292,7 +357,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border dark:border-gray-700 text-center transition-colors duration-300">
             <div className="text-3xl mb-3">📊</div>
             <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Emotion Reports</h3>
@@ -325,6 +390,30 @@ const Dashboard: React.FC = () => {
               Configure
             </button>
           </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border dark:border-gray-700 text-center transition-colors duration-300">
+            <div className="text-3xl mb-3">🔐</div>
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Session Management</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+              Manage your login session and security
+            </p>
+            <div className="space-y-2">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Session expires: {sessionInfo.timeRemaining}
+              </div>
+              <button 
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-colors text-sm"
+              >
+                Sign Out Now
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Session Status Section */}
+        <div className="mt-8">
+          <SessionStatus />
         </div>
       </main>
     </div>

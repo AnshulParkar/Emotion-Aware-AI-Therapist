@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import ThemeToggle from '../../components/ThemeToggle';
+import ThemeToggle from '../../../components/ThemeToggle';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface SessionData {
   id: string;
@@ -15,6 +17,16 @@ interface SessionData {
 }
 
 const Dashboard: React.FC = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || session.user?.role !== "therapist") {
+      router.replace("/auth/signin");
+    }
+  }, [session, status, router]);
+
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [stats, setStats] = useState({
     totalSessions: 0,

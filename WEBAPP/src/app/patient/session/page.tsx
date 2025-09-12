@@ -6,6 +6,8 @@ import ChatInterface from '../../../components/ChatInterface';
 import AvatarDisplay from '../../../components/AvatarDisplay';
 import EmotionAnalytics from '../../../components/EmotionAnalytics';
 import ThemeToggle from '../../../components/ThemeToggle';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { utils } from '../../../lib/api';
 
 interface EmotionData {
@@ -16,6 +18,16 @@ interface EmotionData {
 }
 
 const TherapySession: React.FC = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session || session.user?.role !== "patient") {
+      router.replace("/auth/signin");
+    }
+  }, [session, status, router]);
+
   // const [userId] = useState(() => utils.generateUserId());  // Commented out
   // const [sessionId, setSessionId] = useState<string | null>(null);  // Commented out
   const [currentEmotion, setCurrentEmotion] = useState<string>('neutral');
