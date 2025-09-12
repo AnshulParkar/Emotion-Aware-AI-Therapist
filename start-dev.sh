@@ -31,7 +31,7 @@ print_error() {
 }
 
 # Check if setup was run
-if [ ! -d "ml-backend/venv" ] || [ ! -d "ai-backend/venv" ] || [ ! -d "client/node_modules" ]; then
+if [ ! -d "ml-backend/venv" ] || [ ! -d "ai-backend/venv" ] || [ ! -d "WEBAPP/node_modules" ]; then
     print_error "Dependencies not installed. Please run ./setup.sh first!"
     exit 1
 fi
@@ -107,7 +107,7 @@ fi
 
 # Start Frontend (Next.js)
 print_status "Starting Frontend (Next.js) on port 3000..."
-cd client
+cd WEBAPP
 npm run dev &
 FRONTEND_PID=$!
 cd ..

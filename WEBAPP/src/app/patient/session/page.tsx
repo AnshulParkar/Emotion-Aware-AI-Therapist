@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-// import VideoInterface from '../../components/VideoInterface';
-import ChatInterface from '../../components/ChatInterface';
-import AvatarDisplay from '../../components/AvatarDisplay';
-// import EmotionAnalytics from '../../components/EmotionAnalytics';
-import ThemeToggle from '../../components/ThemeToggle';
-import { utils } from '../../lib/api';
+import VideoInterface from '../../../components/VideoInterface';
+import ChatInterface from '../../../components/ChatInterface';
+import AvatarDisplay from '../../../components/AvatarDisplay';
+import EmotionAnalytics from '../../../components/EmotionAnalytics';
+import ThemeToggle from '../../../components/ThemeToggle';
+import { utils } from '../../../lib/api';
 
 interface EmotionData {
   emotion: string;

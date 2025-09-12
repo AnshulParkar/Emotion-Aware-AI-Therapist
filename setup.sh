@@ -127,8 +127,8 @@ fi
 deactivate
 cd ..
 
-print_status "Setting up Frontend (Next.js Client)..."
-cd client
+print_status "Setting up Frontend (Next.js WEBAPP)..."
+cd WEBAPP
 
 # Install Node.js dependencies
 print_status "Installing frontend dependencies..."
@@ -189,7 +189,7 @@ sleep 3
 
 # Start Frontend
 echo "Starting Frontend (Port 3000)..."
-cd client
+cd WEBAPP
 npm run dev &
 FRONTEND_PID=$!
 cd ..
