@@ -1,0 +1,15 @@
+{
+  "buildCommand": "cd WEBAPP && npm run build",
+  "outputDirectory": "WEBAPP/.next",
+  "installCommand": "cd WEBAPP && npm install",
+  "framework": "nextjs",
+  "functions": {
+    "WEBAPP/src/app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["iad1"],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
