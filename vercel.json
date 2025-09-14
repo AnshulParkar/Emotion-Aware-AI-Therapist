@@ -1,15 +1,20 @@
 {
-  "buildCommand": "cd WEBAPP && npm run build",
-  "outputDirectory": "WEBAPP/.next",
-  "installCommand": "cd WEBAPP && npm install",
-  "framework": "nextjs",
+  "version": 2,
+  "builds": [
+    {
+      "src": "WEBAPP/package.json",
+      "use": "@vercel/next"
+    }
+  ],
   "functions": {
-    "WEBAPP/src/app/api/**/*.ts": {
+    "WEBAPP/src/app/api/auth/[...nextauth]/route.ts": {
       "maxDuration": 30
     }
   },
-  "regions": ["iad1"],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/WEBAPP/$1"
+    }
+  ]
 }
