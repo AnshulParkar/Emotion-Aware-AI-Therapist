@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "WEBAPP/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "functions": {
+    "WEBAPP/src/app/api/auth/[...nextauth]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/WEBAPP/$1"
+    }
+  ]
+}

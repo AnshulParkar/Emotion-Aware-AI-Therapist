@@ -25,7 +25,7 @@
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Client        │    │   AI Backend    │    │  ML Backend     │
+│   WEBAPP        │    │   AI Backend    │    │  ML Backend     │
 │   (Next.js)     │◄──►│   (FastAPI)     │◄──►│   (FastAPI)     │
 │                 │    │                 │    │                 │
 │ • Video UI      │    │ • OpenAI GPT-4  │    │ • Emotion       │
@@ -37,7 +37,7 @@
 
 ## 🛠️ Technology Stack
 
-### Frontend (Client)
+### Frontend (WEBAPP)
 - **Framework**: Next.js 13+ with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -169,7 +169,7 @@ PORT=8002
 DEBUG=true
 ```
 
-**client/.env.local:**
+**WEBAPP/.env.local:**
 ```env
 NEXT_PUBLIC_AI_BACKEND_URL=http://localhost:8001
 NEXT_PUBLIC_ML_BACKEND_URL=http://localhost:8002
@@ -195,7 +195,7 @@ pip install -r requirements.txt
 
 **Install Frontend Dependencies:**
 ```bash
-cd ../client
+cd ../WEBAPP
 npm install
 ```
 
@@ -217,7 +217,7 @@ uvicorn app:app --host 0.0.0.0 --port 8001 --reload
 
 **Terminal 3 - Start Frontend:**
 ```bash
-cd client
+cd WEBAPP
 npm run dev
 ```
 
@@ -313,7 +313,7 @@ curl http://localhost:3000         # Frontend
 
 ```
 Emotion-Aware-AI-Therapist/
-├── client/                 # Next.js frontend
+├── WEBAPP/                # Next.js frontend
 │   ├── app/               # App router pages
 │   ├── components/        # React components
 │   ├── lib/              # Utilities and hooks
@@ -343,7 +343,7 @@ pytest tests/
 
 **Frontend Tests:**
 ```bash
-cd client
+cd WEBAPP
 npm test
 ```
 

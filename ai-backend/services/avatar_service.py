@@ -13,10 +13,19 @@ class AvatarService:
         self.did_api_key = os.getenv("DID_API_KEY")
         self.did_url = "https://api.d-id.com"
         self.default_presenter_id = os.getenv("DID_PRESENTER_ID", "amy-jcwCkr1grs")
+        # Path to dummy video for development
+        self.dummy_video_path = "dummy_avatar.mp4"
         
     async def create_talking_avatar(self, text: str, avatar_id: str = "default") -> str:
-        """Create talking avatar video using D-ID API"""
+        """Create talking avatar video using D-ID API or return dummy video"""
         try:
+            # For now, return dummy video URL instead of calling D-ID API
+            # This allows testing without API costs
+            if not self.did_api_key:
+                logger.info("D-ID API key not found, returning dummy video")
+                return self._create_dummy_video()
+            
+            # If D-ID API is available, use the original implementation
             presenter_id = self.default_presenter_id if avatar_id == "default" else avatar_id
             
             async with httpx.AsyncClient() as client:
@@ -54,7 +63,36 @@ class AvatarService:
                     
         except Exception as e:
             logger.error(f"Error creating talking avatar: {str(e)}")
-            raise e
+            # Fallback to dummy video if API fails
+            return self._create_dummy_video()
+    
+    def _create_dummy_video(self) -> str:
+        """Return dummy video URL for testing"""
+        # Copy the client's aiVideo.mp4 to temp directory and serve it
+        import shutil
+        
+        client_video_path = "../client/public/aiVideo.mp4"
+        dummy_video_filename = f"avatar_dummy_{hash('dummy_video')}.mp4"
+        dummy_video_path = f"temp/{dummy_video_filename}"
+        
+        try:
+            # Ensure temp directory exists
+            os.makedirs("temp", exist_ok=True)
+            
+            # Copy video file if it exists
+            if os.path.exists(client_video_path):
+                shutil.copy2(client_video_path, dummy_video_path)
+                logger.info(f"Copied dummy video to {dummy_video_path}")
+            else:
+                logger.warning(f"Dummy video not found at {client_video_path}")
+                # Create a placeholder file or return a default URL
+                return "/video/placeholder.mp4"
+            
+            return f"/video/{dummy_video_filename}"
+            
+        except Exception as e:
+            logger.error(f"Error creating dummy video: {str(e)}")
+            return "/video/placeholder.mp4"
     
     async def _wait_for_video(self, talk_id: str, max_attempts: int = 30) -> str:
         """Wait for D-ID video to be ready"""

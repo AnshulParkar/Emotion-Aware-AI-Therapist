@@ -1,5 +1,4 @@
 
-import google.generativeai as genai
 import os
 from typing import List, Dict, Optional
 import logging
@@ -9,19 +8,23 @@ logger = logging.getLogger(__name__)
 
 class GeminiService:
     def __init__(self):
+        # Lazy import to avoid multiprocessing issues on Windows
+        import google.generativeai as genai
+        self.genai = genai
+        
         # Configure Gemini API
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ValueError("GEMINI_API_KEY environment variable not set!")
         
-        genai.configure(api_key=api_key)
+        self.genai.configure(api_key=api_key)
         
         # Use Gemini Pro model (free tier)
         self.model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
-        self.model = genai.GenerativeModel(self.model_name)
+        self.model = self.genai.GenerativeModel(self.model_name)
         
         # Configure generation settings
-        self.generation_config = genai.types.GenerationConfig(
+        self.generation_config = self.genai.types.GenerationConfig(
             max_output_tokens=500,
             temperature=0.7,
             top_p=0.9,
