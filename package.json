@@ -17,5 +17,10 @@
   "bugs": {
     "url": "https://github.com/AnshulParkar/Emotion-Aware-AI-Therapist/issues"
   },
-  "homepage": "https://github.com/AnshulParkar/Emotion-Aware-AI-Therapist#readme"
+  "homepage": "https://github.com/AnshulParkar/Emotion-Aware-AI-Therapist#readme",
+  "dependencies": {
+    "lucide-react": "^0.542.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  }
 }
