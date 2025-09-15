@@ -1,36 +1,20 @@
-'use client'
+"use client"
 
+import type React from "react"
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  Plus, 
-  User, 
-  Bell, 
-  CalendarDays, 
-  AlertCircle, 
-  CheckCircle2, 
-  Filter, 
-  Search, 
-  Timer, 
-  Settings, 
-  Eye, 
-  Edit, 
-  UserCheck,
-  ArrowLeft
-} from "lucide-react"
-import { Button } from "../../../components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card"
-import { Badge } from "../../../components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs"
-import { Avatar, AvatarFallback } from "../../../components/ui/avatar"
-import { Input } from "../../../components/ui/input"
-import { Label } from "../../../components/ui/label"
-import { Textarea } from "../../../components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Calendar } from "@/components/ui/calendar"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -39,9 +23,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../../components/ui/dialog"
+} from "@/components/ui/dialog"
+import {
+  CalendarIcon,
+  Clock,
+  Plus,
+  Eye,
+  Edit,
+  UserCheck,
+  AlertCircle,
+  CheckCircle2,
+  ArrowLeft,
+  Filter,
+  Search,
+  CalendarDays,
+  Timer,
+  Settings,
+} from "lucide-react"
 import ThemeToggle from "../../../components/ThemeToggle"
-import TherapistMobileMenu from "../../../components/TherapistMobileMenu"
+import MobileNavigation from "../../../components/MobileNavigation"
 
 interface AppointmentData {
   id: string
@@ -62,7 +62,7 @@ interface TimeSlot {
   dayOfWeek: number // 0 = Sunday, 1 = Monday, etc.
 }
 
-const ScheduleManagement = () => {
+const ScheduleManagement: React.FC = () => {
   const { data: session, status } = useSession()
   const router = useRouter()
 
@@ -79,7 +79,6 @@ const ScheduleManagement = () => {
   const [isNewAppointmentOpen, setIsNewAppointmentOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [activeTab, setActiveTab] = useState<"overview" | "appointments" | "calendar" | "availability">("overview")
 
   // New appointment form state
   const [newAppointment, setNewAppointment] = useState({
@@ -264,356 +263,548 @@ const ScheduleManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
-            <div className="flex items-center space-x-3">
-              <Link href="/therapist/dashboard" className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                <img src="/logo.png" alt="MindBridge Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
-              </Link>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                MindBridge
-              </h1>
-              <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Schedule Management</span>
+      <header className="border-b bg-card">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/therapist/dashboard">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Dashboard
+                </Link>
+              </Button>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-lg">
+                  <CalendarIcon className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Schedule Management</h1>
+                  <p className="text-muted-foreground">Manage appointments and availability</p>
+                </div>
+              </div>
             </div>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-2 sm:space-x-6">
-              <Link 
-                href="/therapist/dashboard" 
-                className="text-sm sm:text-base text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap flex-shrink-0"
-              >
-                Dashboard
-              </Link>
+            <div className="flex items-center space-x-2 md:space-x-4">
               <ThemeToggle />
-            </nav>
-            
-            {/* Mobile Navigation */}
-            <TherapistMobileMenu currentPage="schedule" />
+              
+              {/* Desktop Navigation */}
+              <div className="hidden md:block">
+                <Dialog open={isNewAppointmentOpen} onOpenChange={setIsNewAppointmentOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Appointment
+                    </Button>
+                  </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Schedule New Appointment</DialogTitle>
+                    <DialogDescription>Create a new appointment for a patient.</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="patient-name" className="text-right">
+                        Patient Name
+                      </Label>
+                      <Input
+                        id="patient-name"
+                        value={newAppointment.patientName}
+                        onChange={(e) => setNewAppointment((prev) => ({ ...prev, patientName: e.target.value }))}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="patient-email" className="text-right">
+                        Email
+                      </Label>
+                      <Input
+                        id="patient-email"
+                        type="email"
+                        value={newAppointment.patientEmail}
+                        onChange={(e) => setNewAppointment((prev) => ({ ...prev, patientEmail: e.target.value }))}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="date" className="text-right">
+                        Date
+                      </Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={newAppointment.date}
+                        onChange={(e) => setNewAppointment((prev) => ({ ...prev, date: e.target.value }))}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="time" className="text-right">
+                        Time
+                      </Label>
+                      <Input
+                        id="time"
+                        type="time"
+                        value={newAppointment.time}
+                        onChange={(e) => setNewAppointment((prev) => ({ ...prev, time: e.target.value }))}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="duration" className="text-right">
+                        Duration
+                      </Label>
+                      <Select
+                        value={newAppointment.duration}
+                        onValueChange={(value) => setNewAppointment((prev) => ({ ...prev, duration: value }))}
+                      >
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="30">30 minutes</SelectItem>
+                          <SelectItem value="60">60 minutes</SelectItem>
+                          <SelectItem value="90">90 minutes</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="type" className="text-right">
+                        Type
+                      </Label>
+                      <Select
+                        value={newAppointment.type}
+                        onValueChange={(value: "initial" | "followup" | "emergency") =>
+                          setNewAppointment((prev) => ({ ...prev, type: value }))
+                        }
+                      >
+                        <SelectTrigger className="col-span-3">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="initial">Initial Consultation</SelectItem>
+                          <SelectItem value="followup">Follow-up Session</SelectItem>
+                          <SelectItem value="emergency">Emergency Session</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="notes" className="text-right">
+                        Notes
+                      </Label>
+                      <Textarea
+                        id="notes"
+                        value={newAppointment.notes}
+                        onChange={(e) => setNewAppointment((prev) => ({ ...prev, notes: e.target.value }))}
+                        className="col-span-3"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button onClick={handleCreateAppointment}>Create Appointment</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              </div>
+              
+              {/* Mobile Navigation */}
+              <MobileNavigation />
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        {/* Welcome Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300 p-4 sm:p-6 mb-6 lg:mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
-            <div className="flex items-center space-x-3">
-              <div className="bg-blue-100 dark:bg-blue-900 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center flex-shrink-0">
-                <CalendarIcon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                  Welcome back, Dr. {session?.user?.email?.split("@")[0]}
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1">
-                  Manage your appointments and availability
-                </p>
-              </div>
+      <main className="container mx-auto px-4 py-8">
+        <Tabs defaultValue="overview" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="appointments">All Appointments</TabsTrigger>
+            <TabsTrigger value="calendar">Calendar View</TabsTrigger>
+            <TabsTrigger value="availability">Availability</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-8">
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalAppointments}</div>
+                  <p className="text-xs text-muted-foreground">All scheduled appointments</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Today</CardTitle>
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.todayAppointments}</div>
+                  <p className="text-xs text-muted-foreground">Appointments today</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                  <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.pendingAppointments}</div>
+                  <p className="text-xs text-muted-foreground">Awaiting confirmation</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Confirmed</CardTitle>
+                  <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.confirmedAppointments}</div>
+                  <p className="text-xs text-muted-foreground">Ready to go</p>
+                </CardContent>
+              </Card>
             </div>
-            <Dialog open={isNewAppointmentOpen} onOpenChange={setIsNewAppointmentOpen}>
-              <DialogTrigger asChild>
-                <Button className="flex items-center space-x-2 px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-md">
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">New Appointment</span>
-                  <span className="sm:hidden">New</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Schedule New Appointment</DialogTitle>
-                  <DialogDescription>Create a new appointment for a patient.</DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="patient-name" className="text-right">
-                      Patient Name
-                    </Label>
-                    <Input
-                      id="patient-name"
-                      value={newAppointment.patientName}
-                      onChange={(e) => setNewAppointment((prev) => ({ ...prev, patientName: e.target.value }))}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="patient-email" className="text-right">
-                      Email
-                    </Label>
-                    <Input
-                      id="patient-email"
-                      type="email"
-                      value={newAppointment.patientEmail}
-                      onChange={(e) => setNewAppointment((prev) => ({ ...prev, patientEmail: e.target.value }))}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="date" className="text-right">
-                      Date
-                    </Label>
-                    <Input
-                      id="date"
-                      type="date"
-                      value={newAppointment.date}
-                      onChange={(e) => setNewAppointment((prev) => ({ ...prev, date: e.target.value }))}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="time" className="text-right">
-                      Time
-                    </Label>
-                    <Input
-                      id="time"
-                      type="time"
-                      value={newAppointment.time}
-                      onChange={(e) => setNewAppointment((prev) => ({ ...prev, time: e.target.value }))}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="duration" className="text-right">
-                      Duration
-                    </Label>
-                    <Select
-                      value={newAppointment.duration}
-                      onValueChange={(value) => setNewAppointment((prev) => ({ ...prev, duration: value }))}
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="30">30 minutes</SelectItem>
-                        <SelectItem value="60">60 minutes</SelectItem>
-                        <SelectItem value="90">90 minutes</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="type" className="text-right">
-                      Type
-                    </Label>
-                    <Select
-                      value={newAppointment.type}
-                      onValueChange={(value: "initial" | "followup" | "emergency") =>
-                        setNewAppointment((prev) => ({ ...prev, type: value }))
-                      }
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="initial">Initial Consultation</SelectItem>
-                        <SelectItem value="followup">Follow-up Session</SelectItem>
-                        <SelectItem value="emergency">Emergency Session</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="notes" className="text-right">
-                      Notes
-                    </Label>
-                    <Textarea
-                      id="notes"
-                      value={newAppointment.notes}
-                      onChange={(e) => setNewAppointment((prev) => ({ ...prev, notes: e.target.value }))}
-                      className="col-span-3"
-                      rows={3}
-                    />
-                  </div>
+
+            {/* Today's Schedule */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Today's Schedule</CardTitle>
+                <CardDescription>Your appointments for today</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {todayAppointments.length > 0 ? (
+                    todayAppointments.map((appointment) => (
+                      <div
+                        key={appointment.id}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <Avatar>
+                            <AvatarFallback>
+                              {appointment.patientName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium">{appointment.patientName}</div>
+                            <div className="text-sm text-muted-foreground">{appointment.patientEmail}</div>
+                            {appointment.notes && (
+                              <div className="text-xs text-muted-foreground mt-1">{appointment.notes}</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-right">
+                            <div className="font-medium">{formatTime(appointment.scheduledTime)}</div>
+                            <div className="text-sm text-muted-foreground">{formatDuration(appointment.duration)}</div>
+                          </div>
+                          <Badge className={getTypeColor(appointment.type)}>{appointment.type}</Badge>
+                          <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CalendarIcon className="h-12 w-12 mx-auto mb-4" />
+                      <p>No appointments scheduled for today</p>
+                    </div>
+                  )}
                 </div>
-                <DialogFooter>
-                  <Button onClick={handleCreateAppointment} className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600">
-                    Create Appointment
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+              </CardContent>
+            </Card>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="bg-blue-100 dark:bg-blue-900 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                <CalendarDays className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalAppointments}</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">Total Appointments</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">All scheduled appointments</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="bg-green-100 dark:bg-green-900 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.todayAppointments}</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">Today</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">Appointments today</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="bg-yellow-100 dark:bg-yellow-900 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600 dark:text-yellow-400" />
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.pendingAppointments}</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">Pending</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">Awaiting confirmation</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <div className="bg-green-100 dark:bg-green-900 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{stats.confirmedAppointments}</span>
-            </div>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1">Confirmed</h3>
-            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm">Ready to go</p>
-          </div>
-        </div>
-
-        {/* Today's Schedule */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300 mb-6 lg:mb-8">
-          <div className="p-4 sm:p-6 border-b dark:border-gray-700">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Today's Schedule</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Your appointments for today</p>
-            </div>
-          </div>
-          <div className="p-4 sm:p-6">
-            <div className="space-y-4">
-              {todayAppointments.length > 0 ? (
-                todayAppointments.map((appointment) => (
-                  <div
-                    key={appointment.id}
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors space-y-4 sm:space-y-0"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <Avatar>
-                        <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
-                          {appointment.patientName
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white">{appointment.patientName}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-300">{appointment.patientEmail}</div>
-                        {appointment.notes && (
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{appointment.notes}</div>
+            {/* Upcoming Appointments */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Upcoming Appointments</CardTitle>
+                <CardDescription>Next 5 upcoming appointments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {upcomingAppointments.slice(0, 5).map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <Avatar>
+                          <AvatarFallback>
+                            {appointment.patientName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{appointment.patientName}</div>
+                          <div className="text-sm text-muted-foreground">{formatDate(appointment.scheduledTime)}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <Badge className={getTypeColor(appointment.type)}>{appointment.type}</Badge>
+                        <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
+                        {appointment.status === "pending" && (
+                          <div className="flex space-x-1">
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() => handleConfirmAppointment(appointment.id)}
+                            >
+                              <UserCheck className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleCancelAppointment(appointment.id)}
+                            >
+                              <AlertCircle className="h-3 w-3" />
+                            </Button>
+                          </div>
                         )}
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="text-right">
-                        <div className="font-medium text-gray-900 dark:text-white">{formatTime(appointment.scheduledTime)}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-300">{formatDuration(appointment.duration)}</div>
-                      </div>
-                      <Badge className={getTypeColor(appointment.type)}>{appointment.type}</Badge>
-                      <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                  <CalendarIcon className="h-16 w-16 mx-auto mb-4" />
-                  <p className="text-lg font-medium mb-2">No appointments scheduled for today</p>
-                  <p className="text-sm">Your schedule is clear!</p>
+                  ))}
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Upcoming Appointments */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border dark:border-gray-700 transition-colors duration-300">
-          <div className="p-4 sm:p-6 border-b dark:border-gray-700">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Upcoming Appointments</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Next 5 upcoming appointments</p>
-            </div>
-          </div>
-          <div className="p-4 sm:p-6">
-            <div className="space-y-4">
-              {upcomingAppointments.slice(0, 5).map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors space-y-4 sm:space-y-0"
-                >
-                  <div className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarFallback className="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400">
-                        {appointment.patientName
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">{appointment.patientName}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-300">{formatDate(appointment.scheduledTime)}</div>
+          <TabsContent value="appointments" className="space-y-6">
+            {/* Filters */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search patients..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                      />
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge className={getTypeColor(appointment.type)}>{appointment.type}</Badge>
-                    <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
-                    {appointment.status === "pending" && (
-                      <div className="flex space-x-1">
-                        <Button
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          onClick={() => handleConfirmAppointment(appointment.id)}
-                        >
-                          <UserCheck className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleCancelAppointment(appointment.id)}
-                        >
-                          <AlertCircle className="h-3 w-3" />
-                        </Button>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <Filter className="mr-2 h-4 w-4" />
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="confirmed">Confirmed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* All Appointments */}
+            <Card>
+              <CardHeader>
+                <CardTitle>All Appointments</CardTitle>
+                <CardDescription>Complete list of all scheduled appointments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {filteredAppointments.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <Avatar>
+                          <AvatarFallback>
+                            {appointment.patientName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{appointment.patientName}</div>
+                          <div className="text-sm text-muted-foreground">{appointment.patientEmail}</div>
+                          <div className="text-sm text-muted-foreground">{formatDate(appointment.scheduledTime)}</div>
+                          {appointment.notes && (
+                            <div className="text-xs text-muted-foreground mt-1">{appointment.notes}</div>
+                          )}
+                        </div>
                       </div>
-                    )}
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <div className="text-sm font-medium">{formatDuration(appointment.duration)}</div>
+                        </div>
+                        <Badge className={getTypeColor(appointment.type)}>{appointment.type}</Badge>
+                        <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
+                        <div className="flex space-x-1">
+                          {appointment.status === "pending" && (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => handleConfirmAppointment(appointment.id)}
+                              >
+                                <UserCheck className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleCancelAppointment(appointment.id)}
+                              >
+                                <AlertCircle className="h-3 w-3" />
+                              </Button>
+                            </>
+                          )}
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="calendar" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="lg:col-span-1">
+                <CardHeader>
+                  <CardTitle>Calendar</CardTitle>
+                  <CardDescription>Select a date to view appointments</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} className="rounded-md" />
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle>
+                    {selectedDate ? `Appointments for ${selectedDate.toDateString()}` : "Select a date"}
+                  </CardTitle>
+                  <CardDescription>View and manage appointments for the selected date</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {selectedDate ? (
+                    <div className="space-y-4">
+                      {appointments
+                        .filter((apt) => {
+                          const aptDate = new Date(apt.scheduledTime)
+                          return aptDate.toDateString() === selectedDate.toDateString()
+                        })
+                        .map((appointment) => (
+                          <div
+                            key={appointment.id}
+                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                          >
+                            <div className="flex items-center space-x-4">
+                              <Avatar>
+                                <AvatarFallback>
+                                  {appointment.patientName
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium">{appointment.patientName}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {formatTime(appointment.scheduledTime)} • {formatDuration(appointment.duration)}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Badge className={getTypeColor(appointment.type)}>{appointment.type}</Badge>
+                              <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge>
+                            </div>
+                          </div>
+                        ))}
+                      {appointments.filter((apt) => {
+                        const aptDate = new Date(apt.scheduledTime)
+                        return aptDate.toDateString() === selectedDate.toDateString()
+                      }).length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <CalendarIcon className="h-12 w-12 mx-auto mb-4" />
+                          <p>No appointments scheduled for this date</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CalendarIcon className="h-12 w-12 mx-auto mb-4" />
+                      <p>Select a date from the calendar to view appointments</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="availability" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Settings className="mr-2 h-5 w-5" />
+                  Availability Settings
+                </CardTitle>
+                <CardDescription>Manage your weekly availability and time slots</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-medium mb-4">Monday Time Slots</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {timeSlots.map((slot) => (
+                        <div
+                          key={slot.id}
+                          className={`p-3 border rounded-lg text-center cursor-pointer transition-colors ${
+                            slot.isAvailable
+                              ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-900 dark:border-green-700 dark:text-green-200"
+                              : "bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-200"
+                          }`}
+                        >
+                          <div className="font-medium">
+                            {slot.startTime} - {slot.endTime}
+                          </div>
+                          <div className="text-xs mt-1">{slot.isAvailable ? "Available" : "Booked"}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Timer className="h-12 w-12 mx-auto mb-4" />
+                    <p>Availability management coming soon</p>
+                    <p className="text-sm">Set your working hours and break times</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 dark:bg-gray-950 text-white py-8 mt-16 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <img src="/logo.png" alt="MindBridge Logo" className="w-8 h-8" />
-            <h4 className="text-xl font-bold">MindBridge</h4>
-          </div>
-          <p className="text-gray-400 dark:text-gray-500">
-            Empowering therapists with AI-powered insights and tools.
-          </p>
-          <p className="text-gray-400 dark:text-gray-500 mt-2">
-            &copy; {new Date().getFullYear()} MindBridge. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }
