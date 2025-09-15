@@ -119,4 +119,13 @@
   .ring-foreground { --tw-ring-color: hsl(var(--foreground)); }
   .ring-primary { --tw-ring-color: hsl(var(--primary)); }
   .ring-ring { --tw-ring-color: hsl(var(--ring)); }
+
+  /* Custom scrollbar utilities for better mobile experience */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
