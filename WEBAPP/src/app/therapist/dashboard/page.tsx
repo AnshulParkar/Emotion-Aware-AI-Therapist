@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
@@ -70,7 +71,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (status === "loading") return
-    if (!session || (session.user as any)?.role !== "therapist") {
+  if (!session || (session.user as { role?: string })?.role !== "therapist") {
       router.replace("/auth/signin")
     }
   }, [session, status, router])
@@ -270,7 +271,7 @@ const Dashboard: React.FC = () => {
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-3">
-              <img className="h-12 w-12 flex-shrink-0" src="/logo.png" alt="MindBridge Logo" />
+              <Image className="h-12 w-12 flex-shrink-0" src="/logo.png" alt="MindBridge Logo" width={48} height={48} />
               <div className="min-w-0">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">MindBridge</h1>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Therapist Dashboard</p>
@@ -307,10 +308,10 @@ const Dashboard: React.FC = () => {
           {/* Welcome Message */}
           <div className="mt-6">
             <h2 className="text-1xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-              Welcome back, Dr. {session?.user?.email?.split("@")[0]}
+              Welcome back, Dr. {session?.user?.email?.split('@')[0]}
             </h2>
             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-2">
-              Monitor your patients' progress and manage your therapy sessions
+              Monitor your patients&apos; progress and manage your therapy sessions
             </p>
           </div>
         </div>
@@ -382,7 +383,7 @@ const Dashboard: React.FC = () => {
               <div className="p-4 sm:p-6 border-b dark:border-gray-700">
                 <div className="flex items-center mb-2">
                   <Calendar className="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Today's Schedule</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Today&apos;s Schedule</h3>
                 </div>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Upcoming appointments and sessions</p>
               </div>

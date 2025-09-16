@@ -68,7 +68,7 @@ const ScheduleManagement: React.FC = () => {
 
   useEffect(() => {
     if (status === "loading") return
-    if (!session || (session.user as any)?.role !== "therapist") {
+    if (!session || (session.user as { role?: string })?.role !== "therapist") {
       router.replace("/auth/signin")
     }
   }, [session, status, router])
@@ -476,7 +476,7 @@ const ScheduleManagement: React.FC = () => {
             {/* Today's Schedule */}
             <Card>
               <CardHeader>
-                <CardTitle>Today's Schedule</CardTitle>
+                <CardTitle>Today&apos;s Schedule</CardTitle>
                 <CardDescription>Your appointments for today</CardDescription>
               </CardHeader>
               <CardContent>

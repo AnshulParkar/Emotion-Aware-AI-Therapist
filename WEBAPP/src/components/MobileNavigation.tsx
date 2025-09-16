@@ -65,7 +65,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ className }) => {
             </Button>
           </div>
           <nav className="flex flex-col space-y-4">
-            {(session.user as any)?.role === "patient" && (
+            {(session.user as { role?: string })?.role === "patient" && (
               <>
                 <Button variant="ghost" asChild className="justify-start" onClick={closeSheet}>
                   <Link href="/patient/dashboard">
@@ -81,7 +81,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ className }) => {
                 </Button>
               </>
             )}
-            {(session.user as any)?.role === "therapist" && (
+            {(session.user as { role?: string })?.role === "therapist" && (
               <>
                 <Button variant="ghost" asChild className="justify-start" onClick={closeSheet}>
                   <Link href="/therapist/dashboard">

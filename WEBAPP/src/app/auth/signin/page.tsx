@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -52,7 +53,7 @@ export default function SignInPage() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3">
-              <div className="text-3xl"><img className="h-12 w-12" src="/logo.png" alt="Logo" /></div>
+              <div className="text-3xl"><Image className="h-12 w-12" src="/logo.png" alt="Logo" width={48} height={48} /></div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MindBridge</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Emotion-Aware AI Therapist</p>
@@ -145,7 +146,7 @@ export default function SignInPage() {
 
           <div className="mt-8 text-center">
             <p className="text-gray-600 dark:text-gray-300">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/auth/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors">
                 Sign up here
               </Link>

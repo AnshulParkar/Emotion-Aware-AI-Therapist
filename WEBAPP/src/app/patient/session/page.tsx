@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -47,7 +48,7 @@ const TherapySession: React.FC = () => {
 
   useEffect(() => {
     if (status === "loading") return
-    if (!session || (session.user as any)?.role !== "patient") {
+  if (!session || (session.user as { role?: string })?.role !== "patient") {
       router.replace("/auth/signin")
     }
   }, [session, status, router])
@@ -157,7 +158,7 @@ const TherapySession: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="text-3xl">
-                <img className="h-12 w-12" src="/logo.png" alt="Logo" />
+                <Image className="h-12 w-12" src="/logo.png" alt="Logo" width={48} height={48} />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MindBridge</h1>

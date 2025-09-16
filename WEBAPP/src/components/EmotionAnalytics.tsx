@@ -24,7 +24,7 @@ const EmotionAnalytics: React.FC<EmotionAnalyticsProps> = ({
     if (emotionHistory.length === 0) return null;
 
     const emotionCounts: Record<string, number> = {};
-    let totalConfidence = 0;
+  let totalConfidence = 0;
 
     emotionHistory.forEach(({ emotion, confidence }) => {
       emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;

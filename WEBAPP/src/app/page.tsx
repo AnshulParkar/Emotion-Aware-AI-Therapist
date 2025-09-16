@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import React from 'react';
 import ThemeToggle from '../components/ThemeToggle';
 import { useSession, signOut } from 'next-auth/react';
@@ -15,7 +16,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="text-3xl"><img className="h-12 w-12" src="/logo.png" alt="Logo" /></div>
+              <div className="text-3xl"><Image className="h-12 w-12" src="/logo.png" alt="Logo" width={48} height={48} /></div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MindBridge</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Emotion-Aware AI Therapist</p>
@@ -250,7 +251,7 @@ export default function Home() {
             href={session ? (session.user?.role === 'patient' ? "/patient/session" : "/therapist/dashboard") : "/auth/register"}
             className="inline-flex items-center px-8 py-4 bg-blue-600 dark:bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg"
           >
-            {session ? (session.user?.role === 'patient' ? "Begin Your Session" : "Go to Dashboard") : "Begin Your First Session"}
+            {session ? (session.user?.role === 'patient' ? 'Begin Your Session' : 'Go to Dashboard') : 'Begin Your First Session'}
             <svg className="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
@@ -266,7 +267,7 @@ export default function Home() {
             <h4 className="text-xl font-bold">MindBridge</h4>
           </div>
           <p className="text-gray-400 dark:text-gray-500">
-            Trying to fix people's mental health, one session at a time.
+            Trying to fix people&apos;s mental health, one session at a time.
           </p>
           <p className="text-gray-400 dark:text-gray-500 mt-2">
             &copy; {new Date().getFullYear()} MindBridge. All rights reserved.

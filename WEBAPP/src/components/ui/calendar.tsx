@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { getDefaultClassNames, DayButton as RDPDayButton } from 'react-day-picker';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -24,8 +25,7 @@ function Calendar({
 }: ComponentProps<typeof DayPicker> & {
   buttonVariant?: ComponentProps<typeof Button>['variant']
 }) {
-  // Import functions at runtime to avoid TypeScript module issues
-  const { getDefaultClassNames, DayButton } = require('react-day-picker')
+  // Use ES6 imports for getDefaultClassNames and DayButton
   const defaultClassNames = getDefaultClassNames()
 
   return (
@@ -128,7 +128,7 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        Root: ({ className, rootRef, ...props }: any) => {
+  Root: ({ className, rootRef, ...props }: React.ComponentProps<'div'> & { rootRef?: React.Ref<HTMLDivElement> }) => {
           return (
             <div
               data-slot="calendar"
@@ -138,28 +138,24 @@ function Calendar({
             />
           )
         },
-        Chevron: ({ className, orientation, ...props }: any) => {
+        Chevron: (props) => {
+          const { className, orientation, ...rest } = props;
           if (orientation === 'left') {
             return (
-              <ChevronLeftIcon className={cn('size-4', className)} {...props} />
-            )
+              <ChevronLeftIcon className={cn('size-4', className)} {...rest} />
+            );
           }
-
           if (orientation === 'right') {
             return (
-              <ChevronRightIcon
-                className={cn('size-4', className)}
-                {...props}
-              />
-            )
+              <ChevronRightIcon className={cn('size-4', className)} {...rest} />
+            );
           }
-
           return (
-            <ChevronDownIcon className={cn('size-4', className)} {...props} />
-          )
+            <ChevronDownIcon className={cn('size-4', className)} {...rest} />
+          );
         },
-        DayButton: CalendarDayButton,
-        WeekNumber: ({ children, ...props }: any) => {
+  DayButton: CalendarDayButton,
+  WeekNumber: ({ children, ...props }: { children?: React.ReactNode }) => {
           return (
             <td {...props}>
               <div className="flex size-(--cell-size) items-center justify-center text-center">
@@ -175,13 +171,15 @@ function Calendar({
   )
 }
 
+import type { CalendarDay, Modifiers } from 'react-day-picker';
+import type { ButtonHTMLAttributes } from 'react';
 function CalendarDayButton({
   className,
   day,
   modifiers,
   ...props
-}: any) {
-  const { getDefaultClassNames } = require('react-day-picker')
+}: { day: CalendarDay; modifiers: Modifiers } & ButtonHTMLAttributes<HTMLButtonElement>) {
+  // Use ES6 import for getDefaultClassNames
   const defaultClassNames = getDefaultClassNames()
 
   const ref = React.useRef<HTMLButtonElement>(null)

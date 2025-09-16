@@ -112,7 +112,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <div className="text-4xl mb-4">🧠</div>
             <p className="text-lg font-medium">Welcome to MindBridge</p>
             <p className="text-sm mt-2">
-              I'm here to listen and support you. Share what's on your mind.
+              I&apos;m here to listen and support you. Share what&apos;s on your mind.
             </p>
           </div>
         )}

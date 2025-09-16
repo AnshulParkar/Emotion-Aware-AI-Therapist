@@ -22,31 +22,38 @@ export interface PeerSupportPost {
 }
 
 // Helper functions for validation
-export function validatePostData(data: any): { isValid: boolean; error?: string } {
-  if (!data.content || typeof data.content !== 'string' || data.content.trim().length === 0) {
+export function validatePostData(data: Record<string, unknown>): { isValid: boolean; error?: string } {
+  const validCategories = [
+    'general',
+    'academic-stress',
+    'social-emotional',
+    'time-management',
+    'career-anxiety',
+    'relationships',
+    'health-wellness',
+    'other',
+  ];
+  const content = data.content;
+  const category = data.category;
+  if (typeof content !== 'string' || content.trim().length === 0) {
     return { isValid: false, error: 'Content is required' };
   }
-  
-  if (data.content.length > 2000) {
+  if (content.length > 2000) {
     return { isValid: false, error: 'Content too long (max 2000 characters)' };
   }
-  
-  const validCategories = ['general', 'academic-stress', 'social-emotional', 'time-management', 'career-anxiety', 'relationships', 'health-wellness'];
-  if (!data.category || !validCategories.includes(data.category)) {
+  if (typeof category !== 'string' || !validCategories.includes(category)) {
     return { isValid: false, error: 'Invalid category' };
   }
-  
   return { isValid: true };
 }
 
-export function validateReplyData(data: any): { isValid: boolean; error?: string } {
-  if (!data.content || typeof data.content !== 'string' || data.content.trim().length === 0) {
+export function validateReplyData(data: Record<string, unknown>): { isValid: boolean; error?: string } {
+  const content = data.content;
+  if (typeof content !== 'string' || content.trim().length === 0) {
     return { isValid: false, error: 'Content is required' };
   }
-  
-  if (data.content.length > 1000) {
+  if (content.length > 1000) {
     return { isValid: false, error: 'Content too long (max 1000 characters)' };
   }
-  
   return { isValid: true };
 }

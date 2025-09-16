@@ -517,7 +517,7 @@ function App() {
               <div className="space-y-2 text-sm text-green-700 dark:text-green-300 leading-relaxed">
                 <div>• Be respectful and supportive to fellow students</div>
                 <div>• Keep discussions relevant to mental health and student wellbeing</div>
-                <div>• If you're in crisis, please contact emergency services or campus counseling immediately</div>
+                <div>• If you&apos;re in crisis, please contact emergency services or campus counseling immediately</div>
                 <div>• Report any inappropriate content using the flag button</div>
                 <div>• Remember that while anonymous, your words have real impact</div>
               </div>

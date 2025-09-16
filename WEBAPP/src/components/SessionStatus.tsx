@@ -113,7 +113,7 @@ const SessionStatus: React.FC<SessionStatusProps> = ({ className = '' }) => {
               <span className="text-green-500 mt-0.5">✅</span>
               <div>
                 <div className="font-medium text-gray-700 dark:text-gray-300">
-                  You click "Sign Out" (manual logout)
+                  You click &quot;Sign Out&quot; (manual logout)
                 </div>
                 <button 
                   onClick={handleManualSignOut}
@@ -173,7 +173,7 @@ const SessionStatus: React.FC<SessionStatusProps> = ({ className = '' }) => {
             <div className="font-medium mb-1">💡 Security Tips:</div>
             <ul className="space-y-1 list-disc list-inside">
               <li>Sign out when using shared computers</li>
-              <li>Session refreshes automatically when you're active</li>
+              <li>Session refreshes automatically when you&apos;re active</li>
               <li>Private browsing sessions end when browser closes</li>
               <li>Your session is encrypted and secure</li>
             </ul>

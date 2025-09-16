@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -56,7 +57,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (status === "loading") return
-    if (!session || (session.user as any)?.role !== "patient") {
+  if (!session || (session.user as { role?: string })?.role !== "patient") {
       router.replace("/auth/signin")
     }
   }, [session, status, router])
@@ -185,7 +186,7 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="text-3xl">
-                <img className="h-12 w-12" src="/logo.png" alt="Logo" />
+                <Image className="h-12 w-12" src="/logo.png" alt="Logo" width={48} height={48} />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MindBridge</h1>
@@ -354,7 +355,7 @@ const Dashboard: React.FC = () => {
                   Weekly Progress
                 </CardTitle>
                 <CardDescription className="text-gray-600 dark:text-gray-300">
-                  You've completed {stats.weeklyProgress} out of {stats.weeklyGoal} sessions this week
+                  You&apos;ve completed {stats.weeklyProgress} out of {stats.weeklyGoal} sessions this week
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -547,12 +548,13 @@ const Dashboard: React.FC = () => {
                     <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Date</label>
                     <input 
                       type="date" 
+                      placeholder="Select your preferred date"
                       className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                     />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Time</label>
-                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" aria-label="Select preferred appointment time">
                       <option>Morning (9 AM - 12 PM)</option>
                       <option>Afternoon (1 PM - 5 PM)</option>
                       <option>Evening (6 PM - 8 PM)</option>
@@ -560,7 +562,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Mode</label>
-                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" aria-label="Select preferred appointment mode">
                       <option value="online">Virtual Session</option>
                       <option value="offline">In-Person Session</option>
                     </select>

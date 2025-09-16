@@ -2,7 +2,7 @@
 
 export const SessionManager = {
   // Check if session is about to expire (within 24 hours)
-  isSessionExpiringSoon: (session: any): boolean => {
+  isSessionExpiringSoon: (session: { expires?: string }): boolean => {
     if (!session?.expires) return false;
     const expiryTime = new Date(session.expires).getTime();
     const now = Date.now();
@@ -11,7 +11,7 @@ export const SessionManager = {
   },
 
   // Get remaining session time in human-readable format
-  getSessionTimeRemaining: (session: any): string => {
+  getSessionTimeRemaining: (session: { expires?: string }): string => {
     if (!session?.expires) return 'Unknown';
     const expiryTime = new Date(session.expires).getTime();
     const now = Date.now();

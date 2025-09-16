@@ -62,7 +62,7 @@ export const useChat = (options: UseChatOptions = {}) => {
       }
 
       // Create therapist message
-      let therapistMessage: ChatMessage = {
+      const therapistMessage: ChatMessage = {
         id: `therapist_${Date.now()}`,
         role: 'therapist',
         content: response.response,

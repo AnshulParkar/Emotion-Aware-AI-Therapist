@@ -30,8 +30,9 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = 20;
-    
-    let query: any = { isActive: true };
+
+    // Fix prefer-const: query is never reassigned
+    const query: Record<string, unknown> = { isActive: true };
     
     if (category && category !== 'all') {
       query.category = category;
