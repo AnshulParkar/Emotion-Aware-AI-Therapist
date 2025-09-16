@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   // Optimize for production
   poweredByHeader: false,
   compress: true,
+  // Configure for Netlify deployment
+  trailingSlash: false,
 };
 
 export default nextConfig;
