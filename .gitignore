@@ -1,6 +1,6 @@
 venv/
-myenv/
-.myenv/
+myvenv/
+.myvenv/
 node_modules/
 .next/
 .env
