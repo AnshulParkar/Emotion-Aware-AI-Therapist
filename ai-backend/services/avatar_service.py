@@ -68,31 +68,56 @@ class AvatarService:
     
     def _create_dummy_video(self) -> str:
         """Return dummy video URL for testing"""
-        # Copy the client's aiVideo.mp4 to temp directory and serve it
+        # Copy the webapp's aiVideo.mp4 to temp directory and serve it
         import shutil
         
-        client_video_path = "../client/public/aiVideo.mp4"
-        dummy_video_filename = f"avatar_dummy_{hash('dummy_video')}.mp4"
+        # Use absolute path to the webapp public directory
+        # Current file: project_root/ai-backend/services/avatar_service.py
+        # Need to go up 2 levels: services -> ai-backend -> project_root
+        current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        webapp_video_path = os.path.join(current_dir, "WEBAPP", "public", "aiVideo.mp4")
+        dummy_video_filename = f"avatar_dummy_{abs(hash('dummy_video'))}.mp4"
         dummy_video_path = f"temp/{dummy_video_filename}"
         
         try:
             # Ensure temp directory exists
             os.makedirs("temp", exist_ok=True)
             
-            # Copy video file if it exists
-            if os.path.exists(client_video_path):
-                shutil.copy2(client_video_path, dummy_video_path)
-                logger.info(f"Copied dummy video to {dummy_video_path}")
-            else:
-                logger.warning(f"Dummy video not found at {client_video_path}")
-                # Create a placeholder file or return a default URL
-                return "/video/placeholder.mp4"
+            logger.info(f"🔍 Looking for video at: {webapp_video_path}")
             
-            return f"/video/{dummy_video_filename}"
+            # Copy video file if it exists
+            if os.path.exists(webapp_video_path):
+                shutil.copy2(webapp_video_path, dummy_video_path)
+                logger.info(f"✅ Copied dummy video from {webapp_video_path} to {dummy_video_path}")
+                return f"/video/{dummy_video_filename}"
+            else:
+                logger.warning(f"❌ Dummy video not found at {webapp_video_path}")
+                # Try alternative video files
+                alternative_paths = [
+                    os.path.join(current_dir, "WEBAPP", "public", "aiVideo1.mp4"),
+                    os.path.join(current_dir, "WEBAPP", "public", "aiVideo3.mp4")
+                ]
+                
+                for alt_path in alternative_paths:
+                    logger.info(f"🔍 Trying alternative: {alt_path}")
+                    if os.path.exists(alt_path):
+                        shutil.copy2(alt_path, dummy_video_path)
+                        logger.info(f"✅ Using alternative video: {alt_path}")
+                        return f"/video/{dummy_video_filename}"
+                
+                # If no video files found, create a simple placeholder MP4
+                logger.warning("📄 No video files found, creating minimal placeholder")
+                self._create_placeholder_video(dummy_video_path)
+                return f"/video/{dummy_video_filename}"
             
         except Exception as e:
-            logger.error(f"Error creating dummy video: {str(e)}")
-            return "/video/placeholder.mp4"
+            logger.error(f"❌ Error creating dummy video: {str(e)}")
+            # Create a minimal placeholder
+            try:
+                self._create_placeholder_video(dummy_video_path)
+                return f"/video/{dummy_video_filename}"
+            except:
+                return "/video/placeholder.mp4"
     
     async def _wait_for_video(self, talk_id: str, max_attempts: int = 30) -> str:
         """Wait for D-ID video to be ready"""
@@ -129,6 +154,32 @@ class AvatarService:
             logger.error(f"Error waiting for video: {str(e)}")
             raise e
     
+    def _create_placeholder_video(self, video_path: str) -> None:
+        """Create a minimal placeholder MP4 file"""
+        try:
+            # Create a minimal MP4 file with basic header
+            # This creates a very basic MP4 structure
+            mp4_header = bytes([
+                0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70,  # ftyp box
+                0x69, 0x73, 0x6F, 0x6D, 0x00, 0x00, 0x02, 0x00,
+                0x69, 0x73, 0x6F, 0x6D, 0x69, 0x73, 0x6F, 0x32,
+                0x61, 0x76, 0x63, 0x31, 0x6D, 0x70, 0x34, 0x31,
+                0x00, 0x00, 0x00, 0x08, 0x66, 0x72, 0x65, 0x65  # free box
+            ])
+            
+            with open(video_path, "wb") as f:
+                f.write(mp4_header)
+                # Add some padding to make it a valid minimal MP4
+                f.write(b'\x00' * 100)
+                
+            logger.info(f"📦 Created minimal placeholder MP4: {video_path}")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to create placeholder video: {e}")
+            # Fallback: create a simple text file
+            with open(video_path, "w") as f:
+                f.write("Placeholder video file")
+
     async def get_available_presenters(self) -> list:
         """Get list of available D-ID presenters"""
         try:
