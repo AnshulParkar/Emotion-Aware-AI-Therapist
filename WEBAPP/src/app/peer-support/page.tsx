@@ -506,14 +506,14 @@ function App() {
         </div>
 
         {/* Guidelines Footer */}
-        <div className="mt-8 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 sm:p-6 transition-colors duration-300">
+        <div className="mt-8 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 sm:p-6 transition-colors duration-300">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={20} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle size={20} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
             <div className="min-w-0 flex-1">
-              <h4 className="text-base font-semibold text-amber-800 dark:text-amber-200 mb-3">
+              <h4 className="text-base font-semibold text-green-800 dark:text-green-200 mb-3">
                 Community Guidelines
               </h4>
-              <div className="space-y-2 text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+              <div className="space-y-2 text-sm text-green-700 dark:text-green-300 leading-relaxed">
                 <div>• Be respectful and supportive to fellow students</div>
                 <div>• Keep discussions relevant to mental health and student wellbeing</div>
                 <div>• If you're in crisis, please contact emergency services or campus counseling immediately</div>

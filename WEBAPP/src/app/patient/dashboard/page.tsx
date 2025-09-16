@@ -28,6 +28,7 @@ import {
   Menu,
   X,
   Home,
+  MessageSquare,
 } from "lucide-react"
 import ThemeToggle from "../../../components/ThemeToggle"
 import SessionManager from "../../../lib/sessionManager"
@@ -209,12 +210,13 @@ const Dashboard: React.FC = () => {
                   <Play className="mr-2 h-4 w-4" />
                   Start Session
                 </Link>
-                <div className="flex items-center space-x-2 text-sm">
-                  <div className={`w-2 h-2 rounded-full ${sessionInfo.expiringSoon ? "bg-yellow-500" : "bg-green-500"}`} />
-                  <span className="text-gray-600 dark:text-gray-300">
-                    Session: {sessionInfo.timeRemaining}
-                  </span>
-                </div>
+                <Link
+                  href="/peer-support"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center"
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Peer Support Forums
+                </Link>
               </div>
               
               <ThemeToggle />
