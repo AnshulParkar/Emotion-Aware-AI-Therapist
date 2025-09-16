@@ -1,7 +1,8 @@
 import httpx
-import aiofiles
 import os
 import logging
+import time
+import random
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,9 @@ class TTSService:
         
     async def generate_speech(self, text: str, voice: str = "default") -> str:
         """Generate speech from text using ElevenLabs API or create dummy audio"""
+        # Clean up old files periodically
+        self._cleanup_old_files()
+        
         try:
             # Check if API key is available
             if not self.elevenlabs_api_key:
@@ -51,18 +55,20 @@ class TTSService:
             logger.info(f"📡 ElevenLabs API response: {response.status_code}")
             
             if response.status_code == 200:
-                # Save audio file
-                audio_filename = f"elevenlabs_audio_{hash(text)}.mp3"
+                # Save audio file with unique timestamp to prevent caching
+                timestamp = int(time.time() * 1000)  # milliseconds
+                text_hash = abs(hash(text))
+                audio_filename = f"elevenlabs_audio_{text_hash}_{timestamp}.mp3"
                 audio_path = f"temp/{audio_filename}"
                 
                 # Ensure temp directory exists
                 os.makedirs("temp", exist_ok=True)
                 
-                async with aiofiles.open(audio_path, "wb") as f:
-                    await f.write(response.content)
+                with open(audio_path, "wb") as f:
+                    f.write(response.content)
                 
                 logger.info(f"✅ Successfully generated real TTS audio: {audio_filename}")
-                # Return URL path instead of local path
+                # Return URL path for FastAPI static serving
                 return f"/audio/{audio_filename}"
             
             elif response.status_code == 401:
@@ -89,34 +95,64 @@ class TTSService:
         """Create a dummy audio response when API is not available"""
         logger.warning("🔄 Creating dummy audio as fallback")
         try:
-            # Create a dummy audio file with WAV extension
-            audio_filename = f"dummy_audio_{hash(text)}.wav"
+            # Create unique filename with timestamp to prevent caching
+            timestamp = int(time.time() * 1000)  # milliseconds
+            random_id = random.randint(1000, 9999)  # add randomness
+            text_hash = abs(hash(text))
+            audio_filename = f"dummy_audio_{text_hash}_{timestamp}_{random_id}.mp3"
             audio_path = f"temp/{audio_filename}"
             
             # Ensure temp directory exists
             os.makedirs("temp", exist_ok=True)
             
-            # Always create a new WAV file (don't reuse old files)
+            # Always create a new audio file (don't reuse old files)
             if os.path.exists(audio_path):
                 os.remove(audio_path)  # Remove existing file to ensure fresh creation
             
             # Try to copy a placeholder audio file if it exists
-            placeholder_path = "placeholder_audio.wav"
+            placeholder_path = "placeholder_audio.mp3"
             if os.path.exists(placeholder_path):
                 import shutil
                 shutil.copy2(placeholder_path, audio_path)
                 logger.info(f"📁 Copied placeholder audio to: {audio_path}")
                 return f"/audio/{audio_filename}"
             
-            # Otherwise create a simple WAV file with a tone
-            self._create_simple_wav(audio_path, duration=max(2.0, len(text) * 0.05))
+            # Create a simple WAV file first, then try to convert to MP3
+            wav_path = audio_path.replace('.mp3', '.wav')
+            self._create_simple_wav(wav_path, duration=max(2.0, len(text) * 0.05))
             
-            logger.info(f"🎵 Created dummy audio file: {audio_path}")
+            # For now, just rename WAV to MP3 (basic compatibility)
+            try:
+                import shutil
+                shutil.move(wav_path, audio_path)
+                logger.info(f"🎵 Created dummy audio file: {audio_path}")
+            except Exception:
+                # If rename fails, serve the WAV file directly
+                logger.info(f"🎵 Created dummy WAV file: {wav_path}")
+                wav_filename = f"dummy_audio_{text_hash}_{timestamp}_{random_id}.wav"
+                return f"/audio/{wav_filename}"
+            
             return f"/audio/{audio_filename}"
             
         except Exception as e:
             logger.error(f"❌ Error creating dummy audio: {str(e)}")
-            return "/audio/placeholder.wav"  # Return WAV extension
+            return "/audio/placeholder.mp3"  # Return MP3 extension
+    
+    def _cleanup_old_files(self):
+        """Clean up old audio files to prevent temp directory from getting too large"""
+        try:
+            import glob
+            current_time = time.time()
+            # Remove files older than 1 hour (3600 seconds)
+            cutoff_time = current_time - 3600
+            
+            for file_pattern in ["temp/dummy_audio_*.mp3", "temp/dummy_audio_*.wav", "temp/elevenlabs_audio_*.mp3"]:
+                for file_path in glob.glob(file_pattern):
+                    if os.path.getmtime(file_path) < cutoff_time:
+                        os.remove(file_path)
+                        logger.info(f"🧹 Cleaned up old audio file: {file_path}")
+        except Exception as e:
+            logger.warning(f"⚠️ Could not clean up old files: {str(e)}")
     
     def _create_simple_wav(self, filename: str, duration: float = 2.0, sample_rate: int = 22050):
         """Create a simple WAV file with a tone"""
