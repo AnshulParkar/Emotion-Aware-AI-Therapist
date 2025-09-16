@@ -11,7 +11,7 @@ export interface Reply {
 export interface PeerSupportPost {
   _id?: ObjectId;
   content: string;
-  category: 'academic-stress' | 'social-emotional' | 'time-management' | 'career-anxiety' | 'relationships' | 'health-wellness' | 'other';
+  category: 'general' | 'academic-stress' | 'social-emotional' | 'time-management' | 'career-anxiety' | 'relationships' | 'health-wellness' | 'other';
   likes: number;
   replies: Reply[];
   anonymousId: string;
@@ -31,7 +31,7 @@ export function validatePostData(data: any): { isValid: boolean; error?: string 
     return { isValid: false, error: 'Content too long (max 2000 characters)' };
   }
   
-  const validCategories = ['academic-stress', 'social-emotional', 'time-management', 'career-anxiety', 'relationships', 'health-wellness'];
+  const validCategories = ['general', 'academic-stress', 'social-emotional', 'time-management', 'career-anxiety', 'relationships', 'health-wellness'];
   if (!data.category || !validCategories.includes(data.category)) {
     return { isValid: false, error: 'Invalid category' };
   }

@@ -417,6 +417,48 @@ const Dashboard: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="sessions" className="space-y-6">
+            {/* Start New Session Card */}
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 shadow-lg transition-colors duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                  <Play className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Start New Therapy Session
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
+                  Begin a new AI-powered therapy session with real-time emotion detection
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      Ready to start your mental health journey? Our AI therapist is here to listen and support you.
+                    </div>
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-4">
+                      <span className="flex items-center">
+                        <Brain className="mr-1 h-3 w-3" />
+                        AI-Powered
+                      </span>
+                      <span className="flex items-center">
+                        <Activity className="mr-1 h-3 w-3" />
+                        Emotion Detection
+                      </span>
+                      <span className="flex items-center">
+                        <MessageSquare className="mr-1 h-3 w-3" />
+                        Real-time Chat
+                      </span>
+                    </div>
+                  </div>
+                  <Link href="/patient/session">
+                    <Button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200">
+                      <Play className="mr-2 h-4 w-4" />
+                      Start Session Now
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg transition-colors duration-300">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white">Recent Sessions</CardTitle>
@@ -500,7 +542,7 @@ const Dashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Date</label>
                     <input 
@@ -514,6 +556,13 @@ const Dashboard: React.FC = () => {
                       <option>Morning (9 AM - 12 PM)</option>
                       <option>Afternoon (1 PM - 5 PM)</option>
                       <option>Evening (6 PM - 8 PM)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Mode</label>
+                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                      <option value="online">Virtual Session</option>
+                      <option value="offline">In-Person Session</option>
                     </select>
                   </div>
                 </div>

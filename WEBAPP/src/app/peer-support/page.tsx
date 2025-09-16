@@ -27,6 +27,7 @@ interface Reply {
 
 const categories = [
   { id: 'all', name: 'All Posts', color: '#6B7280', bgClass: 'bg-gray-500', hoverClass: 'hover:bg-gray-600' },
+  { id: 'general', name: 'General', color: '#64748B', bgClass: 'bg-slate-500', hoverClass: 'hover:bg-slate-600' },
   { id: 'academic-stress', name: 'Academic Stress', color: '#EF4444', bgClass: 'bg-red-500', hoverClass: 'hover:bg-red-600' },
   { id: 'social-emotional', name: 'Social & Emotional', color: '#3B82F6', bgClass: 'bg-blue-500', hoverClass: 'hover:bg-blue-600' },
   { id: 'time-management', name: 'Time Management', color: '#10B981', bgClass: 'bg-green-500', hoverClass: 'hover:bg-green-600' },
@@ -39,7 +40,7 @@ function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('academic-stress');
+  const [selectedCategory, setSelectedCategory] = useState('general');
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewPostForm, setShowNewPostForm] = useState(false);
