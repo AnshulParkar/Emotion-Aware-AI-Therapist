@@ -28,6 +28,7 @@ import {
   Menu,
   X,
   Home,
+  MessageSquare,
 } from "lucide-react"
 import ThemeToggle from "../../../components/ThemeToggle"
 import SessionManager from "../../../lib/sessionManager"
@@ -209,12 +210,13 @@ const Dashboard: React.FC = () => {
                   <Play className="mr-2 h-4 w-4" />
                   Start Session
                 </Link>
-                <div className="flex items-center space-x-2 text-sm">
-                  <div className={`w-2 h-2 rounded-full ${sessionInfo.expiringSoon ? "bg-yellow-500" : "bg-green-500"}`} />
-                  <span className="text-gray-600 dark:text-gray-300">
-                    Session: {sessionInfo.timeRemaining}
-                  </span>
-                </div>
+                <Link
+                  href="/peer-support"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center"
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Peer Support Forums
+                </Link>
               </div>
               
               <ThemeToggle />
@@ -287,9 +289,10 @@ const Dashboard: React.FC = () => {
         <Tabs defaultValue="overview" className="space-y-8">
           {/* Tab Navigation with improved styling */}
           <div className="flex justify-center">
-            <TabsList className="grid w-full max-w-md grid-cols-2 lg:max-w-2xl lg:grid-cols-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
+            <TabsList className="grid w-full max-w-md grid-cols-2 lg:max-w-3xl lg:grid-cols-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
               <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Overview</TabsTrigger>
               <TabsTrigger value="sessions" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Sessions</TabsTrigger>
+              <TabsTrigger value="appointments" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Appointments</TabsTrigger>
               <TabsTrigger value="progress" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Progress</TabsTrigger>
               <TabsTrigger value="settings" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Settings</TabsTrigger>
             </TabsList>
@@ -414,6 +417,48 @@ const Dashboard: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="sessions" className="space-y-6">
+            {/* Start New Session Card */}
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 shadow-lg transition-colors duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                  <Play className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Start New Therapy Session
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
+                  Begin a new AI-powered therapy session with real-time emotion detection
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      Ready to start your mental health journey? Our AI therapist is here to listen and support you.
+                    </div>
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-4">
+                      <span className="flex items-center">
+                        <Brain className="mr-1 h-3 w-3" />
+                        AI-Powered
+                      </span>
+                      <span className="flex items-center">
+                        <Activity className="mr-1 h-3 w-3" />
+                        Emotion Detection
+                      </span>
+                      <span className="flex items-center">
+                        <MessageSquare className="mr-1 h-3 w-3" />
+                        Real-time Chat
+                      </span>
+                    </div>
+                  </div>
+                  <Link href="/patient/session">
+                    <Button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200">
+                      <Play className="mr-2 h-4 w-4" />
+                      Start Session Now
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg transition-colors duration-300">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white">Recent Sessions</CardTitle>
@@ -479,6 +524,177 @@ const Dashboard: React.FC = () => {
                       </div>
                     )
                   })}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="appointments" className="space-y-6">
+            {/* Request Appointment Section */}
+            <Card className="bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg transition-colors duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                  <Calendar className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Request New Appointment
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
+                  Schedule a session with your therapist
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Date</label>
+                    <input 
+                      type="date" 
+                      className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Time</label>
+                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                      <option>Morning (9 AM - 12 PM)</option>
+                      <option>Afternoon (1 PM - 5 PM)</option>
+                      <option>Evening (6 PM - 8 PM)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">Preferred Mode</label>
+                    <select className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                      <option value="online">Virtual Session</option>
+                      <option value="offline">In-Person Session</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <label className="text-sm font-medium text-gray-900 dark:text-white">Reason for Appointment</label>
+                  <textarea 
+                    placeholder="Please describe the reason for your appointment (optional)"
+                    className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    rows={3}
+                  ></textarea>
+                </div>
+                <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Request Appointment
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Appointments */}
+            <Card className="bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg transition-colors duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                  <Clock className="mr-2 h-5 w-5 text-green-600 dark:text-green-400" />
+                  Upcoming Appointments
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
+                  Your scheduled sessions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Mock upcoming appointments */}
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-green-50 dark:bg-green-900/20">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                          <Calendar className="h-6 w-6 text-green-600 dark:text-green-400" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Dr. Sarah Johnson</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Tomorrow, 2:00 PM</p>
+                        <p className="text-xs text-green-600 dark:text-green-400">Confirmed</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      Confirmed
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
+                          <Calendar className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Dr. Michael Chen</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Friday, 10:00 AM</p>
+                        <p className="text-xs text-yellow-600 dark:text-yellow-400">Pending Confirmation</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                      Pending
+                    </Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Past Appointments */}
+            <Card className="bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg transition-colors duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center text-gray-900 dark:text-white">
+                  <CheckCircle2 className="mr-2 h-5 w-5 text-gray-600 dark:text-gray-400" />
+                  Past Appointments
+                </CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
+                  Your appointment history
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Mock past appointments */}
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                          <CheckCircle2 className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Dr. Sarah Johnson</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Last Monday, 2:00 PM</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Duration: 50 minutes</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                        Completed
+                      </Badge>
+                      <Button variant="outline" size="sm" className="mt-2 ml-2">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Notes
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                          <CheckCircle2 className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Dr. Emily Rodriguez</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">2 weeks ago, 4:00 PM</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Duration: 45 minutes</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                        Completed
+                      </Badge>
+                      <Button variant="outline" size="sm" className="mt-2 ml-2">
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Notes
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

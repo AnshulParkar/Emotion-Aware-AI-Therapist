@@ -27,6 +27,7 @@ interface Reply {
 
 const categories = [
   { id: 'all', name: 'All Posts', color: '#6B7280', bgClass: 'bg-gray-500', hoverClass: 'hover:bg-gray-600' },
+  { id: 'general', name: 'General', color: '#64748B', bgClass: 'bg-slate-500', hoverClass: 'hover:bg-slate-600' },
   { id: 'academic-stress', name: 'Academic Stress', color: '#EF4444', bgClass: 'bg-red-500', hoverClass: 'hover:bg-red-600' },
   { id: 'social-emotional', name: 'Social & Emotional', color: '#3B82F6', bgClass: 'bg-blue-500', hoverClass: 'hover:bg-blue-600' },
   { id: 'time-management', name: 'Time Management', color: '#10B981', bgClass: 'bg-green-500', hoverClass: 'hover:bg-green-600' },
@@ -39,7 +40,7 @@ function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('academic-stress');
+  const [selectedCategory, setSelectedCategory] = useState('general');
   const [filterCategory, setFilterCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewPostForm, setShowNewPostForm] = useState(false);
@@ -506,14 +507,14 @@ function App() {
         </div>
 
         {/* Guidelines Footer */}
-        <div className="mt-8 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 sm:p-6 transition-colors duration-300">
+        <div className="mt-8 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 sm:p-6 transition-colors duration-300">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={20} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle size={20} className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
             <div className="min-w-0 flex-1">
-              <h4 className="text-base font-semibold text-amber-800 dark:text-amber-200 mb-3">
+              <h4 className="text-base font-semibold text-green-800 dark:text-green-200 mb-3">
                 Community Guidelines
               </h4>
-              <div className="space-y-2 text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+              <div className="space-y-2 text-sm text-green-700 dark:text-green-300 leading-relaxed">
                 <div>• Be respectful and supportive to fellow students</div>
                 <div>• Keep discussions relevant to mental health and student wellbeing</div>
                 <div>• If you're in crisis, please contact emergency services or campus counseling immediately</div>
