@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "src/app/api/auth/[...nextauth]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["cle1", "iad1"],
+  "framework": "nextjs"
+}

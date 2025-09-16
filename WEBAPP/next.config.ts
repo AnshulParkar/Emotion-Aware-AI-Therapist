@@ -10,8 +10,14 @@ const nextConfig: NextConfig = {
   // Optimize for production
   poweredByHeader: false,
   compress: true,
-  // Configure for Netlify deployment
+  // Configure for deployment
   trailingSlash: false,
+  // Vercel-optimized settings
+  swcMinify: true,
+  // Environment-specific optimizations
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
 };
 
 export default nextConfig;
