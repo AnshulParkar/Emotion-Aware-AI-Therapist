@@ -6,14 +6,13 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: [], // Add any external image domains you're using
+    unoptimized: false, // Enable Next.js image optimization
   },
   // Optimize for production
   poweredByHeader: false,
   compress: true,
   // Configure for deployment
   trailingSlash: false,
-  // Vercel-optimized settings
-  swcMinify: true,
   // Environment-specific optimizations
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
