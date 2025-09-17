@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import ThemeToggle from '../components/ThemeToggle';
 import { useSession, signOut } from 'next-auth/react';
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const [logoError, setLogoError] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
@@ -16,7 +17,31 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="text-3xl"><Image className="h-12 w-12" src="/logo.png" alt="Logo" width={48} height={48} /></div>
+              <div className="text-3xl">
+                {!logoError ? (
+                  <Image 
+                    className="h-12 w-12" 
+                    src="/logo.png" 
+                    alt="MindBridge Logo" 
+                    width={48} 
+                    height={48}
+                    priority={true}
+                    onError={(e) => {
+                      console.error('Logo failed to load, trying fallback:', e);
+                      setLogoError(true);
+                    }}
+                  />
+                ) : (
+                  <Image 
+                    className="h-12 w-12" 
+                    src="/logo-fallback.svg" 
+                    alt="MindBridge Logo" 
+                    width={48} 
+                    height={48}
+                    priority={true}
+                  />
+                )}
+              </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MindBridge</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Emotion-Aware AI Therapist</p>

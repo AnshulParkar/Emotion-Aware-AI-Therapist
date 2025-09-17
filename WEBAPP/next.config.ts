@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: [], // Add any external image domains you're using
-    unoptimized: false, // Enable Next.js image optimization
+    unoptimized: true, // Temporarily disable Next.js image optimization
   },
   // Optimize for production
   poweredByHeader: false,
