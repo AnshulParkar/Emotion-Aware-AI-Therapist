@@ -41,22 +41,34 @@ app.mount("/video", StaticFiles(directory="temp"), name="video")
 
 # Initialize services lazily to avoid import issues
 gemini_service = None
+groq_service = None
 tts_service = None
 avatar_service = None
 
 def get_services():
     """Lazy initialization of services"""
-    global gemini_service, tts_service, avatar_service
-    if gemini_service is None:
-        from services.ai_service import GeminiService
+    # global gemini_service, tts_service, avatar_service
+    # if gemini_service is None:
+    #     from services.ai_service import GeminiService
+    #     from services.tts_service import TTSService
+    #     from services.avatar_service import AvatarService
+        
+    #     gemini_service = GeminiService()
+    #     tts_service = TTSService()
+    #     avatar_service = AvatarService()
+    
+    # return gemini_service, tts_service, avatar_service
+    global groq_service, tts_service, avatar_service
+    if groq_service is None:
+        from services.ai_service import GroqService
         from services.tts_service import TTSService
         from services.avatar_service import AvatarService
-        
-        gemini_service = GeminiService()
+
+        groq_service = GroqService()
         tts_service = TTSService()
         avatar_service = AvatarService()
-    
-    return gemini_service, tts_service, avatar_service
+
+    return groq_service, tts_service, avatar_service
 
 @app.get("/") # this is known as a decorator and gets executed when the root endpoint is hit
 async def root():
@@ -68,15 +80,15 @@ async def health_check():
 
 @app.post("/chat") # This is also a decorator and gets executed when the /chat endpoint is hit and post is the method that is used to send data to the endpoint
 async def chat_with_therapist(message: dict):
-    """Generate therapeutic response using Gemini"""
+    """Generate therapeutic response using Groq"""
     try:
-        gemini_service, _, _ = get_services()
+        groq_service, _, _ = get_services()
         
         user_message = message.get("message", "")
         emotion = message.get("emotion", "neutral")
         # session_id = message.get("session_id", None)  # Commented out session functionality
 
-        response = await gemini_service.generate_therapy_response(user_message, emotion)
+        response = await groq_service.generate_therapy_response(user_message, emotion)
         return {"response": response, "status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

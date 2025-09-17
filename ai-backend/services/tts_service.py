@@ -46,7 +46,6 @@ class TTSService:
                         }
                     }
                     url = f"{self.elevenlabs_url}/text-to-speech/{voice_id}"
-                    
                     response = await client.post(url, headers=headers, json=data)
                     return response
             
@@ -55,6 +54,10 @@ class TTSService:
             logger.info(f"📡 ElevenLabs API response: {response.status_code}")
             
             if response.status_code == 200:
+                user_data = response.json()
+                logger.info(f"✅ API Key is valid! User: {user_data.get('first_name', 'Unknown')}")
+                logger.info(f"Character limit: {user_data.get('subscription', {}).get('character_limit', 'N/A')}")
+                logger.info(f"Tokens available: {user_data.get('subscription', {}).get('character_count', 'N/A')}")
                 # Save audio file with unique timestamp to prevent caching
                 timestamp = int(time.time() * 1000)  # milliseconds
                 text_hash = abs(hash(text))
