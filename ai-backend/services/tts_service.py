@@ -19,6 +19,37 @@ class TTSService:
         else:
             logger.warning("❌ ElevenLabs API key not found in environment variables")
         
+    async def check_account_info(self) -> dict:
+        """Check ElevenLabs account information separately"""
+        try:
+            if not self.elevenlabs_api_key:
+                return {"error": "API key not available"}
+                
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                headers = {
+                    "Accept": "application/json",
+                    "xi-api-key": self.elevenlabs_api_key
+                }
+                
+                response = await client.get(
+                    f"{self.elevenlabs_url}/user",
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    user_data = response.json()
+                    logger.info(f"✅ API Key is valid! User: {user_data.get('first_name', 'Unknown')}")
+                    logger.info(f"Character limit: {user_data.get('subscription', {}).get('character_limit', 'N/A')}")
+                    logger.info(f"Tokens available: {user_data.get('subscription', {}).get('character_count', 'N/A')}")
+                    return user_data
+                else:
+                    logger.error(f"❌ Failed to get account info: {response.status_code}")
+                    return {"error": f"API error: {response.status_code}"}
+                    
+        except Exception as e:
+            logger.error(f"❌ Error checking account: {str(e)}")
+            return {"error": str(e)}
+
     async def generate_speech(self, text: str, voice: str = "default") -> str:
         """Generate speech from text using ElevenLabs API or create dummy audio"""
         # Clean up old files periodically
@@ -54,10 +85,9 @@ class TTSService:
             logger.info(f"📡 ElevenLabs API response: {response.status_code}")
             
             if response.status_code == 200:
-                user_data = response.json()
-                logger.info(f"✅ API Key is valid! User: {user_data.get('first_name', 'Unknown')}")
-                logger.info(f"Character limit: {user_data.get('subscription', {}).get('character_limit', 'N/A')}")
-                logger.info(f"Tokens available: {user_data.get('subscription', {}).get('character_count', 'N/A')}")
+                # Success! We have audio data, not JSON
+                logger.info(f"✅ Successfully received audio data from ElevenLabs")
+                
                 # Save audio file with unique timestamp to prevent caching
                 timestamp = int(time.time() * 1000)  # milliseconds
                 text_hash = abs(hash(text))
@@ -75,15 +105,34 @@ class TTSService:
                 return f"/audio/{audio_filename}"
             
             elif response.status_code == 401:
-                logger.error(f"❌ ElevenLabs API: Unauthorized - {response.text}")
+                # Check if it's a quota issue
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get('detail', {})
+                    if 'quota' in str(error_detail).lower() or 'limit' in str(error_detail).lower():
+                        logger.error(f"❌ ElevenLabs API: Quota exceeded - {error_detail}")
+                        logger.warning("💡 Consider upgrading your ElevenLabs plan or using a different account")
+                    else:
+                        logger.error(f"❌ ElevenLabs API: Unauthorized - {error_detail}")
+                except:
+                    logger.error(f"❌ ElevenLabs API: Unauthorized - Possibly quota exceeded or invalid API key")
+                    logger.warning("💡 Check your ElevenLabs account quota at https://elevenlabs.io/")
                 return self._create_dummy_audio(text)
             
             elif response.status_code == 422:
-                logger.error(f"❌ ElevenLabs API: Invalid request data - {response.text}")
+                try:
+                    error_data = response.json()
+                    logger.error(f"❌ ElevenLabs API: Invalid request data - {error_data}")
+                except:
+                    logger.error(f"❌ ElevenLabs API: Invalid request data - {response.text}")
                 return self._create_dummy_audio(text)
             
             else:
-                logger.error(f"❌ ElevenLabs API error: {response.status_code} - {response.text}")
+                try:
+                    error_data = response.json()
+                    logger.error(f"❌ ElevenLabs API error: {response.status_code} - {error_data}")
+                except:
+                    logger.error(f"❌ ElevenLabs API error: {response.status_code} - {response.text}")
                 return self._create_dummy_audio(text)
                     
         except httpx.TimeoutException:
