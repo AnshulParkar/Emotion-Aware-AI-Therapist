@@ -1,7 +1,7 @@
 # Core FastAPI and web framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-pydantic==2.4.2
+pydantic==2.9.2
 # pydantic-core==2.10.1  # Commented out to avoid Rust compilation
 starlette==0.27.0
 

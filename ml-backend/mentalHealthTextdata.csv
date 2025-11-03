@@ -1,0 +1,26 @@
+user_id,chat_text,age,gender,session_length,previous_sessions,mental_health_level
+1,"I feel very anxious and can't sleep at night.",22,F,15,2,Critical
+2,"I'm happy with my progress lately.",25,M,10,5,Healthy
+3,"Sometimes I feel hopeless and tired.",19,F,20,1,Critical
+4,"I've been stressed about my exams.",21,M,12,3,Moderate
+5,"I enjoy spending time with friends.",23,F,8,4,Healthy
+6,"I feel overwhelmed by my workload.",24,F,18,2,Critical
+7,"My mood has been improving recently.",26,M,9,6,Healthy
+8,"I often feel lonely and isolated.",20,F,17,1,Critical
+9,"I'm worried about my future.",22,M,13,2,Moderate
+10,"I have trouble concentrating on tasks.",21,F,16,3,Moderate
+11,"I feel supported by my family.",23,M,7,5,Healthy
+12,"I get nervous in social situations.",25,F,14,2,Moderate
+13,"I feel optimistic about my goals.",24,M,11,4,Healthy
+14,"I have frequent mood swings.",19,F,19,1,Critical
+15,"I am able to manage my stress well.",22,M,8,3,Healthy
+16,"I feel sad most of the time.",20,F,21,2,Critical
+17,"I am making progress in therapy.",23,M,10,5,Healthy
+18,"I struggle with negative thoughts.",21,F,15,1,Critical
+19,"I am motivated to improve my health.",25,M,9,4,Healthy
+20,"I feel nervous before presentations.",24,F,13,2,Moderate
+21,"I have difficulty sleeping.",22,M,17,3,Moderate
+22,"I am grateful for my friends.",23,F,7,5,Healthy
+23,"I feel exhausted and unmotivated.",19,M,20,1,Critical
+24,"I am learning to cope with anxiety.",21,F,12,2,Moderate
+25,"I am satisfied with my achievements.",24,M,8,4,Healthy
